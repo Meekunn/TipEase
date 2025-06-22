@@ -23,6 +23,15 @@ const buttonRecipe = defineRecipe({
           color: "white",
         },
       },
+      formBtn: {
+        h: "fit-content",
+        py: 4,
+        color: "white",
+        bgColor: "primary",
+        borderRadius: "4xl",
+        fontWeight: "medium",
+        fontSize: "md",
+      },
     },
   },
 });

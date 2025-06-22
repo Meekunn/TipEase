@@ -1,9 +1,13 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 import { colors } from "./colors";
-// import headingRecipe from "./recipes/headingRecipe";
+import headingRecipe from "./recipes/headingRecipe";
 // import linkRecipe from "./recipes/linkRecipe";
 import buttonRecipe from "./recipes/buttonRecipe";
-// import inputRecipe from "./recipes/inputRecipe";
+import tagSlotRecipe from "./slotRecipes/tagSlotRecipe";
+import inputRecipe from "./recipes/inputRecipe";
+import textareaRecipe from "./recipes/textareaRecipe";
+import switchSlotRecipe from "./slotRecipes/switchSlotRecipe";
+import numberInputSlotRecipe from "./slotRecipes/numberInputSlotRecipe";
 
 const config = defineConfig({
   globalCss: {
@@ -26,10 +30,16 @@ const config = defineConfig({
       },
     },
     recipes: {
-      // heading: headingRecipe,
+      heading: headingRecipe,
       // link: linkRecipe,
       button: buttonRecipe,
-      // input: inputRecipe,
+      input: inputRecipe,
+      textarea: textareaRecipe,
+    },
+    slotRecipes: {
+      numberInput: numberInputSlotRecipe,
+      tag: tagSlotRecipe,
+      switch: switchSlotRecipe,
     },
   },
 });
