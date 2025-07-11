@@ -8,6 +8,8 @@ import inputRecipe from "./recipes/inputRecipe";
 import textareaRecipe from "./recipes/textareaRecipe";
 import switchSlotRecipe from "./slotRecipes/switchSlotRecipe";
 import numberInputSlotRecipe from "./slotRecipes/numberInputSlotRecipe";
+import iconButtonRecipe from "./recipes/iconButtonRecipe";
+import tabsSlotRecipe from "./slotRecipes/tabsSlotRecipe";
 
 const config = defineConfig({
   globalCss: {
@@ -19,6 +21,7 @@ const config = defineConfig({
       color: colors.textPrimary.value,
       lineHeight: "100%",
       letterSpacing: "0px",
+      fontWeight: "500",
     },
   },
   theme: {
@@ -35,11 +38,18 @@ const config = defineConfig({
       button: buttonRecipe,
       input: inputRecipe,
       textarea: textareaRecipe,
+      iconButton: iconButtonRecipe,
     },
     slotRecipes: {
       numberInput: numberInputSlotRecipe,
       tag: tagSlotRecipe,
       switch: switchSlotRecipe,
+      tabs: tabsSlotRecipe,
+    },
+    keyframes: {
+      spin: {
+        to: { transform: "rotate(360deg)" },
+      },
     },
   },
 });

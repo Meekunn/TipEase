@@ -1,28 +1,11 @@
 import { defineRecipe } from "@chakra-ui/react";
 
-const buttonRecipe = defineRecipe({
+const iconButtonRecipe = defineRecipe({
   base: {
     fontWeight: "normal",
   },
   variants: {
     variant: {
-      navBtnLink: {
-        fontWeight: "normal",
-        color: "textPrimary",
-        bgColor: "bgBrightGray",
-        border: "0.6px solid #EAECF0",
-        py: 2,
-        px: 4,
-        borderRadius: "md",
-        fontSize: "sm",
-        _hover: {
-          bgColor: "pink",
-        },
-        _active: {
-          bgColor: "customPrimary",
-          color: "white",
-        },
-      },
       formBtn: {
         h: "fit-content",
         py: 4,
@@ -46,4 +29,4 @@ const buttonRecipe = defineRecipe({
   },
 });
 
-export default buttonRecipe;
+export default iconButtonRecipe;

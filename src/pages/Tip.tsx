@@ -1,158 +1,60 @@
-import { ClipboardIcon, UsdtIcon } from "@/components/reusables/icon";
-import SelectCurrency from "@/components/reusables/SelectCurrency";
-import {
-  Button,
-  Center,
-  createListCollection,
-  Field,
-  Heading,
-  HStack,
-  Input,
-  InputGroup,
-  NumberInput,
-  Switch,
-  Tag,
-  Text,
-  Textarea,
-  VStack,
-} from "@chakra-ui/react";
-import { RiVuejsLine, RiAngularjsLine } from "react-icons/ri";
-import { VscCircleFilled } from "react-icons/vsc";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
+import { Button, Center, VStack } from "@chakra-ui/react";
+import ConnectAndTip from "@/components/reusables/SendTip/ConnectAndTip";
+import PreviewTip from "@/components/reusables/SendTip/PreviewTip";
+import TransactionSummary from "@/components/reusables/SendTip/TransactionSummary";
+import Loader from "@/components/reusables/Loader";
 
 const Tip = () => {
-  const currencies = createListCollection({
-    items: [
-      { label: "USDT", value: "react", icon: <UsdtIcon /> },
-      { label: "USDC", value: "vue", icon: <RiVuejsLine /> },
-      { label: "TRX", value: "angular", icon: <RiAngularjsLine /> },
-    ],
-  });
+  const [step, setStep] = useState(1);
+  const [btnText, setBtnText] = useState("Preview tip");
+  const [isLoading] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const previewTip = () => {
+    setStep(2);
+  };
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const sendTip = () => {
+    // setIsLoading(true);
+    setStep(3);
+  };
+
+  const backToHome = () => {
+    setStep(1);
+  };
+
+  const handleClick = () => {
+    if (step === 1) {
+      previewTip();
+      setBtnText("Send tip");
+    } else if (step === 2) {
+      sendTip();
+      setBtnText("Back to home");
+    } else {
+      backToHome();
+      setBtnText("Preview tip");
+    }
+  };
 
   return (
     <Center py={16}>
       <VStack w="533px" gap={4}>
-        <Heading as="h1" size="h1">
-          Connect wallet and tip anyone, anywhere, anytime.
-        </Heading>
-        <VStack
-          border="0.6px solid"
-          borderColor="bgPrimary"
-          borderRadius="xl"
-          p={3}
-          gap={8}
-          w="full"
-          mt={4}
-        >
-          <VStack
-            bgColor="bgSecondary"
-            p={4}
-            borderRadius="xl"
-            border="0.6px solid"
-            borderColor="bgPrimary"
-            gap={6}
-            w="full"
-          >
-            <HStack justify="space-between" align="center" w="full">
-              <Text fontSize="sm" fontWeight="medium" color="textSecondary">
-                Tip
-              </Text>
-              <SelectCurrency currencies={currencies} />
-            </HStack>
-            <HStack justify="space-between" align="center" w="full">
-              <NumberInput.Root variant="borderless">
-                <NumberInput.Input placeholder="0.00" ref={inputRef} />
-              </NumberInput.Root>
-              <HStack align="center" gap={2}>
-                <Tag.Root variant="roundTag" colorPalette="orange">
-                  <Tag.StartElement>
-                    <VscCircleFilled />
-                  </Tag.StartElement>
-                  <Tag.Label>Min</Tag.Label>
-                </Tag.Root>
-                <Tag.Root variant="roundTag" colorPalette="green">
-                  <Tag.StartElement>
-                    <VscCircleFilled />
-                  </Tag.StartElement>
-                  <Tag.Label>Max</Tag.Label>
-                </Tag.Root>
-              </HStack>
-            </HStack>
-            <HStack justify="space-between" align="center" w="full">
-              <Text fontSize="sm" fontWeight="medium" color="textSecondary">
-                Bal:{" "}
-                <Text as="span" color="textPrimary">
-                  {" "}
-                  21.42313
-                </Text>
-              </Text>
-              <Text fontSize="sm" fontWeight="medium" color="textSecondary">
-                1 USDT ≈ $1 USD
-              </Text>
-            </HStack>
-          </VStack>
-          <Field.Root>
-            <Field.Label color="textSecondary">Tag</Field.Label>
-            <InputGroup
-              flex="1"
-              endElement={
-                <Button
-                  borderRadius="2xl"
-                  py={1}
-                  h="fit-content"
-                  px={2}
-                  gap={1}
-                  bgColor="bgSecondary"
-                  color="textPrimary"
-                  fontSize="2xs"
-                  _hover={{ bgColor: "bgPrimary" }}
-                  onClick={() => console.log("clicked")}
-                >
-                  <ClipboardIcon />
-                  Paste
-                </Button>
-              }
-            >
-              <Input placeholder="Add tag" />
-            </InputGroup>
-          </Field.Root>
-          <Field.Root>
-            <Field.Label color="textSecondary">Message (Optional)</Field.Label>
-            <Textarea maxH="5lh" h={28} placeholder="Add a note" />
-          </Field.Root>
+        {step === 1 && <ConnectAndTip />}
+        {step === 2 && <PreviewTip setStep={setStep} />}
+        {step === 3 && <TransactionSummary />}
+        <VStack gap={2} w="full" mt={16}>
+          <Button w="full" variant="formBtn" onClick={handleClick}>
+            {btnText}
+          </Button>
+
+          {step === 3 && (
+            <Button w="full" variant="formBtnOutline">
+              View receipt
+            </Button>
+          )}
         </VStack>
-        <HStack justify="start" w="full" my={2}>
-          <Switch.Root colorPalette="gray" size="lg">
-            <Switch.HiddenInput />
-            <Switch.Control>
-              <Switch.Thumb />
-              <Switch.Indicator
-                fallback={
-                  <Text fontSize="2xs" color="textSecondary">
-                    OFF
-                  </Text>
-                }
-              >
-                <Text fontSize="2xs" color="white">
-                  ON
-                </Text>
-              </Switch.Indicator>
-            </Switch.Control>
-            <Switch.Label color="textSecondary" fontWeight="medium">
-              Remain anonymous
-            </Switch.Label>
-          </Switch.Root>
-        </HStack>
-        <Button w="full" variant="formBtn" mt={16}>
-          Preview tip
-        </Button>
       </VStack>
+      <Loader text="Sending tip..." open={isLoading} />
     </Center>
   );
 };

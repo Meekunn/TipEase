@@ -1,6 +1,6 @@
 // colors.ts  (token version)
 export const colors = {
-  primary: { value: "#0D0D0D" },
+  customPrimary: { value: "#0D0D0D" },
   textPrimary: { value: "#0D0D0D" },
   textSecondary: { value: " #718096" },
   textLight: { value: "#A3A3A3" },

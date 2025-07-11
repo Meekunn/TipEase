@@ -1,6 +1,6 @@
 import { defineSlotRecipe } from "@chakra-ui/react";
 
-const numberInputRecipe = defineSlotRecipe({
+const numberInputSlotRecipe = defineSlotRecipe({
   slots: ["root", "input"],
   variants: {
     variant: {
@@ -23,4 +23,4 @@ const numberInputRecipe = defineSlotRecipe({
   },
 });
 
-export default numberInputRecipe;
+export default numberInputSlotRecipe;

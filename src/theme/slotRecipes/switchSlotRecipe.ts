@@ -9,7 +9,7 @@ const switchSlotRecipe = defineSlotRecipe({
         control: {
           bgColor: "gray.100",
           _checked: {
-            bgColor: "primary",
+            bgColor: "customPrimary",
           },
         },
         thumb: {
