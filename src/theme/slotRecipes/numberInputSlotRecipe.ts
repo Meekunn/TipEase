@@ -1,7 +1,8 @@
 import { defineSlotRecipe } from "@chakra-ui/react";
+import { numberInputAnatomy } from "@chakra-ui/react/anatomy";
 
 const numberInputSlotRecipe = defineSlotRecipe({
-  slots: ["root", "input"],
+  slots: numberInputAnatomy.keys(),
   variants: {
     variant: {
       borderless: {
@@ -17,6 +18,27 @@ const numberInputSlotRecipe = defineSlotRecipe({
           _placeholder: {
             color: "#71809666",
           },
+        },
+      },
+      outlineIcon: {
+        root: {
+          border: "1px solid",
+          borderColor: "bgPrimary",
+          borderRadius: "xl",
+          bg: "white",
+        },
+        input: {
+          fontSize: "sm",
+          color: "textPrimary",
+          bg: "white",
+          pl: 6,
+          borderRadius: "inherit",
+        },
+        control: {
+          border: "none",
+        },
+        decrementTrigger: {
+          border: "none",
         },
       },
     },

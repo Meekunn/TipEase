@@ -16,6 +16,7 @@ import CoverImage from "@/assets/cover-image.jpg";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
 import { CopyIcon } from "@/components/reusables/icon";
 import ProfileTab from "@/components/reusables/ProfileTab";
+import PreferenceTab from "@/components/reusables/PreferenceTab";
 
 const Profile = () => {
   return (
@@ -110,10 +111,13 @@ const Profile = () => {
         <Tabs.Root defaultValue="profile" w="full" variant="customLine">
           <Tabs.List>
             <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
-            <Tabs.Trigger value="preferences">Preferences</Tabs.Trigger>
+            <Tabs.Trigger value="preference">Preferences</Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content value="profile" bg="bgSecondary" p={4}>
             <ProfileTab />
+          </Tabs.Content>
+          <Tabs.Content value="preference" bg="bgSecondary" p={4}>
+            <PreferenceTab />
           </Tabs.Content>
         </Tabs.Root>
       </Center>
