@@ -13,6 +13,7 @@ import {
   Button,
   Box,
   For,
+  Dialog,
 } from "@chakra-ui/react";
 import {
   BitcoinIcon,
@@ -27,6 +28,7 @@ import { IoMdPower } from "react-icons/io";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import { LiaWalletSolid } from "react-icons/lia";
 import TokenValueCard from "./TokenValueCard";
+import WithdrawDialog from "../WithdrawDialog";
 
 const WalletDetails = () => {
   const totalValue = "$15,963.70";
@@ -143,10 +145,14 @@ const WalletDetails = () => {
             </HStack>
           </VStack>
         </VStack>
-        <Button w="full" variant="formBtnOutline" py={2} fontSize="sm">
-          <LiaWalletSolid />
-          Withdraw
-        </Button>
+        <WithdrawDialog>
+          <Dialog.Trigger asChild>
+            <Button w="full" variant="formBtnOutline" py={2} fontSize="sm">
+              <LiaWalletSolid />
+              Withdraw
+            </Button>
+          </Dialog.Trigger>
+        </WithdrawDialog>
       </VStack>
       <Box w="full" h="0.6px" bg="bgPrimary" />
       <VStack gap={4} w="full" align="start">

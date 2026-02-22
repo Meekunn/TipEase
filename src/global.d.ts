@@ -17,3 +17,7 @@ interface TokenValueCardProps {
   walletValue: string;
   icon: React.ReactNode;
 }
+
+interface StepProps {
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+}

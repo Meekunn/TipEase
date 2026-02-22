@@ -11,6 +11,7 @@ import numberInputSlotRecipe from "./slotRecipes/numberInputSlotRecipe";
 import iconButtonRecipe from "./recipes/iconButtonRecipe";
 import tabsSlotRecipe from "./slotRecipes/tabsSlotRecipe";
 import selectSlotRecipe from "./slotRecipes/selectSlotRecipe";
+import dialogSlotRecipe from "./slotRecipes/dialogSlotRecipe";
 
 const config = defineConfig({
   globalCss: {
@@ -47,6 +48,7 @@ const config = defineConfig({
       switch: switchSlotRecipe,
       tabs: tabsSlotRecipe,
       select: selectSlotRecipe,
+      dialog: dialogSlotRecipe,
     },
     keyframes: {
       spin: {
