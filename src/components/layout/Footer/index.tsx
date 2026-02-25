@@ -11,7 +11,7 @@ const Footer = () => {
       w="100%"
     >
       <Text fontSize="xs" color="#A3A3A3" fontWeight="normal">
-        © 2025 abisabii. All Rights Reserved
+        © 2025 abisabii & Ayomikun. All Rights Reserved
       </Text>
     </HStack>
   );

@@ -13,11 +13,6 @@ export const truncateWalletAddress = (
   return `${firstPart}...${lastPart}`;
 };
 
-/**
- * Copies text to the clipboard
- * @param text - The text to copy to clipboard
- * @returns Promise<boolean> - Returns true if successful, false otherwise
- */
 export const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
     // Use modern Clipboard API if available

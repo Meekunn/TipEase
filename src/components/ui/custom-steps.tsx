@@ -1,6 +1,5 @@
 import { Steps } from "@chakra-ui/react"
-import type { JSX } from "react";
-
+import { type JSX } from "react";
 export interface CustomStepsProps {
   steps: {
     title: string;
@@ -9,18 +8,20 @@ export interface CustomStepsProps {
   }[],
   currentStep: number;
   onStepChange?: (step: number) => void;
+  setCurrentStep?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const CustomSteps = ({ steps, currentStep }: CustomStepsProps) => {
+
   return (
      <Steps.Root step={currentStep} count={steps.length} orientation="vertical" height="400px">
       <Steps.List>
         {steps.map((step, index) => (
-          <Steps.Item key={index} index={index}>
+          <Steps.Item key={index} index={index} >
             <Steps.Indicator>
               <Steps.Status incomplete={step.icon} complete={step.icon} />
             </Steps.Indicator>
-            <Steps.Title>{step.title}</Steps.Title>
+            <Steps.Title fontSize="sm" mt={2.5}>{step.title}</Steps.Title>
             <Steps.Separator
               top="2.5rem"
               w="4px"
@@ -29,9 +30,10 @@ const CustomSteps = ({ steps, currentStep }: CustomStepsProps) => {
           </Steps.Item>
         ))}
       </Steps.List>
+
+       
     </Steps.Root>
   )
 }
 
 export default CustomSteps
-

@@ -30,7 +30,7 @@ const Payment = () => {
       <VStack gap={6} align="start" w="full">
         <Select.Root collection={currencies}>
           <Select.HiddenSelect />
-          <Select.Label color="textSecondary" fontSize="xs"> Default Currency</Select.Label>
+          <Select.Label color="textSecondary" fontSize="xs">Default Currency</Select.Label>
 
           <Select.Control>
             <Select.Trigger>

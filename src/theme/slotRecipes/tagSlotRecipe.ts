@@ -14,6 +14,16 @@ const tagSlotRecipe = defineSlotRecipe({
           fontSize: "xs",
         },
       },
+      inputRoundTag: {
+        root: {
+          borderRadius: "3xl",
+          px: 2,
+          py: 0.5,
+        },
+        label: {
+          fontSize: "2xs",
+        },
+      },
     },
     colorPalette: {
       orange: {

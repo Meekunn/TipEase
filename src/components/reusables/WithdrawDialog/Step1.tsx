@@ -46,7 +46,7 @@ const Step1 = ({setCurrentStep}: StepProps) => {
           </HStack>
         </VStack>
       </VStack>
-      <Button w="full" variant="subtle" borderRadius="full" onClick={() => setCurrentStep(1)}>Start withdrawal</Button>
+      <Button w="full" borderRadius="full" onClick={() => setCurrentStep(1)}>Start withdrawal</Button>
     </VStack>
   )
 }

@@ -12,6 +12,7 @@ import iconButtonRecipe from "./recipes/iconButtonRecipe";
 import tabsSlotRecipe from "./slotRecipes/tabsSlotRecipe";
 import selectSlotRecipe from "./slotRecipes/selectSlotRecipe";
 import dialogSlotRecipe from "./slotRecipes/dialogSlotRecipe";
+import stepsSlotRecipe from "./slotRecipes/stepsSlotRecipe";
 
 const config = defineConfig({
   globalCss: {
@@ -49,6 +50,7 @@ const config = defineConfig({
       tabs: tabsSlotRecipe,
       select: selectSlotRecipe,
       dialog: dialogSlotRecipe,
+      steps: stepsSlotRecipe,
     },
     keyframes: {
       spin: {

@@ -113,7 +113,7 @@ const TipForm = ({ children, border = true }: TipFormProps) => {
                 _hover={{ bgColor: "bgPrimary" }}
                 onClick={() => console.log("clicked")}
               >
-                <ClipboardIcon />
+                <ClipboardIcon color="#292D32" />
                 Paste
               </Button>
             }
