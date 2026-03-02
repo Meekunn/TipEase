@@ -44,6 +44,7 @@ const Navbar = () => {
       py={6}
       position="fixed"
       top={0}
+      left={0}
     >
       <Image src={logo} alt="TipEase Logo" />
       <HStack gap={2} align="center" display={{base: 'none', md: "flex"}}>
