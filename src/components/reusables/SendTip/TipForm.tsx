@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
-import { ClipboardIcon, UsdtIcon } from "@/components/reusables/icon";
+import { useRef } from "react";
+import { BitcoinIcon, ClipboardIcon, EthereumIcon, TronIcon, UsdtIcon } from "@/components/reusables/icon";
 import SelectCurrency from "@/components/reusables/SelectCurrency";
 import {
+  Box,
   Button,
   createListCollection,
   Field,
@@ -15,31 +16,60 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { RiVuejsLine, RiAngularjsLine } from "react-icons/ri";
 import { VscCircleFilled } from "react-icons/vsc";
+import { pasteFromClipboard } from "@/utils/formatText";
+import { useWallet } from "@/hooks/useWallet";
+import { useSendTip } from "@/hooks/useSendTip";
+import { Controller, useForm } from "react-hook-form";
 
 interface TipFormProps {
   children?: React.ReactNode;
   border?: boolean;
+  btnText: string;
+  setStep?: React.Dispatch<React.SetStateAction<number>>
+  margintop?: number;
 }
 
-const TipForm = ({ children, border = true }: TipFormProps) => {
+const TipForm = ({ border = true, btnText, setStep, margintop = 16 }: TipFormProps) => {
+
+  const {wallet} =  useWallet()
+  const {updateSendTipForm, sendTipForm} = useSendTip()
   const currencies = createListCollection({
     items: [
-      { label: "USDT", value: "react", icon: <UsdtIcon /> },
-      { label: "USDC", value: "vue", icon: <RiVuejsLine /> },
-      { label: "TRX", value: "angular", icon: <RiAngularjsLine /> },
+      { label: "USDT", value: "usdt", icon: <UsdtIcon /> },
+      { label: "BTC", value: "bitcoin", icon: <BitcoinIcon /> },
+      { label: "TRX", value: "tron", icon: <TronIcon /> },
+      { label: "ETH", value: "ethereum", icon: <EthereumIcon /> },
     ],
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<ISendTipForm>({
+    defaultValues: {
+      coin: sendTipForm.coin,
+      amount: sendTipForm.amount,
+      address: sendTipForm.address,
+      note: sendTipForm.note,
+      anonymous: sendTipForm.anonymous,
+    }
+  });
+
+  const onSubmit = (data: ISendTipForm) => {
+    console.log(data);
+    updateSendTipForm(data);
+    if(setStep) {
+      setStep(2)
+    }
+  };
+
+  const pasteTag = async () => {
+    const text = await pasteFromClipboard();
+    if (text) setValue("address", text);
+  }
 
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <VStack
         border={border ? "0.6px solid" : "none"}
         borderColor={border ? "bgPrimary" : "transparent"}
@@ -49,55 +79,81 @@ const TipForm = ({ children, border = true }: TipFormProps) => {
         w="full"
         bgColor="white"
       >
-        <VStack
-          bgColor="bgSecondary"
-          p={4}
-          borderRadius="xl"
-          border="0.6px solid"
-          borderColor="bgPrimary"
-          gap={6}
-          w="full"
-        >
-          <HStack justify="space-between" align="center" w="full">
-            <Text fontSize="sm" color="textSecondary">
-              Tip
-            </Text>
-            <SelectCurrency currencies={currencies} />
-          </HStack>
-          <HStack justify="space-between" align="center" w="full">
-            <NumberInput.Root variant="borderless">
-              <NumberInput.Input placeholder="0.00" ref={inputRef} />
-            </NumberInput.Root>
-            <HStack align="center" gap={2}>
-              <Tag.Root variant="roundTag" colorPalette="orange">
-                <Tag.StartElement>
-                  <VscCircleFilled />
-                </Tag.StartElement>
-                <Tag.Label>Min</Tag.Label>
-              </Tag.Root>
-              <Tag.Root variant="roundTag" colorPalette="green">
-                <Tag.StartElement>
-                  <VscCircleFilled />
-                </Tag.StartElement>
-                <Tag.Label>Max</Tag.Label>
-              </Tag.Root>
-            </HStack>
-          </HStack>
-          <HStack justify="space-between" align="center" w="full">
-            <Text fontSize="sm" color="textSecondary">
-              Bal:{" "}
-              <Text as="span" color="textPrimary">
-                {" "}
-                21.42313
+        
+          <VStack
+            bgColor="bgSecondary"
+            p={4}
+            borderRadius="xl"
+            border="0.6px solid"
+            borderColor={errors.amount ? "red.400" :"bgPrimary"}
+            gap={6}
+            w="full"
+          >
+            <HStack justify="space-between" align="center" w="full">
+              <Text fontSize="sm" color="textSecondary">
+                Tip
               </Text>
-            </Text>
-            <Text fontSize="sm" color="textSecondary">
-              1 USDT ≈ $1 USD
-            </Text>
-          </HStack>
-        </VStack>
-        <Field.Root>
-          <Field.Label color="textSecondary">Tag</Field.Label>
+              <Field.Root invalid={!!errors.coin} w="fit">
+                <Controller
+                  name="coin"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectCurrency currencies={currencies} onValueChange={(value) => field.onChange(value)}  />
+                  )}
+                />
+              </Field.Root>
+            </HStack>
+            <HStack justify="space-between" align="center" w="full">
+              <Field.Root invalid={!!errors.amount}>
+                <Controller
+                  name="amount"
+                  control={control}
+                  rules={{ required: "Amount is required" }}
+                  render={({ field }) => (
+                    <NumberInput.Root
+                      variant="borderless"
+                      value={field.value}
+                      onValueChange={(e) => field.onChange(e.value)}
+                    >
+                      <NumberInput.Input placeholder="0.00" autoFocus ref={amountInputRef} />
+                    </NumberInput.Root>
+                  )}
+                />
+                {errors.amount && <Field.ErrorText>{errors.amount.message}</Field.ErrorText>}
+              </Field.Root>
+              <HStack align="center" gap={2}>
+                <Tag.Root variant="roundTag" colorPalette="orange">
+                  <Tag.StartElement>
+                    <VscCircleFilled />
+                  </Tag.StartElement>
+                  <Tag.Label>Min</Tag.Label>
+                </Tag.Root>
+                <Box cursor="pointer" onClick={() => setValue("amount", wallet.balance.toString())}>
+                  <Tag.Root variant="roundTag" colorPalette="green">
+                    <Tag.StartElement>
+                      <VscCircleFilled />
+                    </Tag.StartElement>
+                    <Tag.Label>Max</Tag.Label>
+                  </Tag.Root>
+                </Box>
+              </HStack>
+            </HStack>
+            <HStack justify="space-between" align="center" w="full">
+              <Text fontSize="sm" color="textSecondary">
+                Bal:{" "}
+                <Text as="span" color="textPrimary">
+                  {" "}
+                  {wallet.balance}
+                </Text>
+              </Text>
+              <Text fontSize="sm" color="textSecondary">
+                1 USDT ≈ $1 USD
+              </Text>
+            </HStack>
+          </VStack>
+        
+        <Field.Root invalid={!!errors.address}>
+          <Field.Label color="textSecondary">Address</Field.Label>
           <InputGroup
             flex="1"
             endElement={
@@ -111,43 +167,60 @@ const TipForm = ({ children, border = true }: TipFormProps) => {
                 color="textPrimary"
                 fontSize="2xs"
                 _hover={{ bgColor: "bgPrimary" }}
-                onClick={() => console.log("clicked")}
+                onClick={pasteTag}
               >
                 <ClipboardIcon color="#292D32" />
                 Paste
               </Button>
             }
           >
-            <Input placeholder="Add tag" />
+            <Input {...register("address", { required: "Recipient address is required" })} placeholder="Add recipient address" />
           </InputGroup>
+          {errors.address && <Field.ErrorText>{errors.address.message}</Field.ErrorText>}
         </Field.Root>
         <Field.Root>
           <Field.Label color="textSecondary">Message (Optional)</Field.Label>
-          <Textarea maxH="5lh" h={28} placeholder="Add a note" />
+          <Textarea maxH="5lh" h={28} placeholder="Add a note" {...register("note")} />
         </Field.Root>
       </VStack>
       <HStack justify="start" w="full" my={2} bg="transparent">
-        <Switch.Root colorPalette="gray" size="lg">
-          <Switch.HiddenInput />
-          <Switch.Control>
-            <Switch.Thumb />
-            <Switch.Indicator
-              fallback={
-                <Text fontSize="2xs" color="textSecondary">
-                  OFF
-                </Text>
-              }
-            >
-              <Text fontSize="2xs" color="white">
-                ON
-              </Text>
-            </Switch.Indicator>
-          </Switch.Control>
-          <Switch.Label color="textSecondary">Remain anonymous</Switch.Label>
-        </Switch.Root>
+        <Controller
+          name="anonymous"
+          control={control}
+          render={({ field }) => (
+            <Field.Root invalid={!!errors.anonymous}>
+              <Switch.Root 
+                colorPalette="gray" 
+                size="lg"
+                name={field.name}
+                checked={field.value}
+                onCheckedChange={({ checked }) => field.onChange(checked)}
+              >
+                <Switch.HiddenInput onBlur={field.onBlur} />
+                <Switch.Control>
+                  <Switch.Thumb />
+                  <Switch.Indicator
+                    fallback={
+                      <Text fontSize="2xs" color="textSecondary">
+                        OFF
+                      </Text>
+                    }
+                  >
+                    <Text fontSize="2xs" color="white">
+                      ON
+                    </Text>
+                  </Switch.Indicator>
+                </Switch.Control>
+                <Switch.Label color="textSecondary">Remain anonymous</Switch.Label>
+              </Switch.Root>
+            </Field.Root>
+          )}
+        />
       </HStack>
-      {children}
-    </>
+      <Button w="full" variant="formBtn" type="submit" mt={margintop}>
+        {btnText}
+      </Button>
+    </form>
   );
 };
 

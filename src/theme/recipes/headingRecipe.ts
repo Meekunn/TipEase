@@ -10,7 +10,10 @@ const headingRecipe = defineRecipe({
   variants: {
     size: {
       h1: {
-        fontSize: "2rem",
+        fontSize: {
+          base: "2xl",
+          md: "2rem",
+        },
         letterSpacing: "2%",
         lineHeight: "115%",
       },

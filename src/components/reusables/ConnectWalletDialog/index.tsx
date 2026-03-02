@@ -1,10 +1,9 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Dialog,
   VStack,
   Portal,
   CloseButton,
-  Avatar,
   For,
   Button,
   Box,
@@ -17,12 +16,30 @@ import BinanceWallet from "@/assets/binance.png";
 import WalletConnect from "@/assets/wallet-connect.png";
 import AllWallets from "@/assets/other-wallet.png";
 import { MdOutlineQrCodeScanner } from "react-icons/md";
+import { useWallet } from "@/hooks/useWallet";
+import ProfileImage from "@/assets/profile-image.jpg";
 
 interface ConnectWalletDialogProps {
   children: ReactNode;
 }
 
 const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
+
+  const {updateWallet} = useWallet()
+
+  const [open, setOpen] = useState(false)
+
+  const connectWallet = (platform: string) => {
+    updateWallet({
+      address: "0x4aF934569203874072030Ed9e",
+      name: "TipEase Wallet",
+      image: ProfileImage,
+      platform: platform,
+      balance: 246.32
+    })
+    setOpen(false)
+  }
+
   const walletOptions: WalletCardProps[] = [
     {
       icon: MetaMask,
@@ -82,7 +99,7 @@ const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
     },
   ];
   return (
-    <Dialog.Root placement="center">
+    <Dialog.Root placement="center" lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
       {children}
       <Portal>
         <Dialog.Backdrop />
@@ -109,12 +126,8 @@ const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
                   {(wallet, index) => (
                     <WalletCard
                       key={index}
-                      icon={
-                        <AvatarCard image={wallet.icon} name={wallet.label} />
-                      }
-                      label={wallet.label}
-                      description={wallet.description}
-                      extra={wallet.extra}
+                      card={wallet}
+                      connectWallet={connectWallet}
                     />
                   )}
                 </For>
@@ -127,13 +140,6 @@ const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
   );
 };
 
-const AvatarCard = ({ image, name }: { image: string; name: string }) => {
-  return (
-    <Avatar.Root>
-      <Avatar.Fallback name={name} />
-      <Avatar.Image src={image} />
-    </Avatar.Root>
-  );
-};
+
 
 export default ConnectWalletDialog;

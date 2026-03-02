@@ -15,8 +15,14 @@ const buttonRecipe = defineRecipe({
         px: 4,
         borderRadius: "md",
         fontSize: "sm",
+        transform: {
+          md: "scale(0.95)",
+        },
+        transition: "0.3s all ease-in-out",
         _hover: {
-          bgColor: "pink",
+          bgColor: "customPrimary",
+          color: "white",
+          transform: "scale(1.0)",
         },
         _active: {
           bgColor: "customPrimary",
@@ -31,6 +37,11 @@ const buttonRecipe = defineRecipe({
         borderRadius: "4xl",
         fontWeight: "medium",
         fontSize: "md",
+        transition: "0.25s all ease-in-out",
+        boxShadow: "2xl",
+        _hover: {
+          transform: "scale(1.05)",
+        },
       },
       formBtnOutline: {
         h: "fit-content",
@@ -41,6 +52,7 @@ const buttonRecipe = defineRecipe({
         borderRadius: "4xl",
         fontWeight: "medium",
         fontSize: "md",
+        transition: "0.3s all ease-in-out",
       },
     },
   },

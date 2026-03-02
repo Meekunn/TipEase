@@ -5,7 +5,7 @@ interface ISelectCurrency {
 }
 
 interface WalletCardProps {
-  icon: ReactNode;
+  icon: string;
   label: string;
   description: string;
   extra?: ReactNode;
@@ -20,4 +20,20 @@ interface TokenValueCardProps {
 
 interface StepProps {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+}
+
+interface IWallet {
+  address: string;
+  name: string;
+  image: string;
+  platform: string;
+  balance: number;
+}
+
+interface ISendTipForm {
+  coin: string;
+  amount: string;
+  address: string;
+  note?: string;
+  anonymous: boolean;
 }

@@ -5,38 +5,48 @@ import {
   IconButton,
   Image,
   Dialog,
-  Avatar,
-  Text,
   Float,
   Circle,
   Box,
+  Stack,
+  Drawer,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router";
 import { GoBell } from "react-icons/go";
 import logo from "@/assets/icons/logo.svg";
-import "./navbar.css";
-import { CopyIcon, EmptyWalletIcon } from "@/components/reusables/icon";
+import { EmptyWalletIcon } from "@/components/reusables/icon";
 import ConnectWalletDialog from "@/components/reusables/ConnectWalletDialog";
-import ProfileImage from "@/assets/profile-image.jpg";
-import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
-import { TbCaretDownFilled } from "react-icons/tb";
+import MobileNavbar from "./MobileNavbar";
+import { CgMenuRightAlt } from "react-icons/cg";
+import { useWallet } from "@/hooks/useWallet";
+import WalletConnected from "./WalletConnected";
+import "./navbar.css";
 
 const Navbar = () => {
-  const [isWalletConnected] = useState(true);
-  const [isNotification] = useState(true);
+  
+  const {wallet} = useWallet()
+
+  const [open, setOpen] = useState(false)
+  const [isNotification] = useState(false);
+
+  const isWalletConnected = !!wallet.address;
 
   return (
     <HStack
       justify="space-between"
       align="center"
-      w="100%"
+      w="full"
       borderBottom="1px solid"
       borderColor="bgSecondary"
-      px={32}
+      bg="white"
+      zIndex={999}
+      px={{base: 6,  md: 32}}
       py={6}
+      position="fixed"
+      top={0}
     >
       <Image src={logo} alt="TipEase Logo" />
-      <HStack gap={2} align="center">
+      <HStack gap={2} align="center" display={{base: 'none', md: "flex"}}>
         <Button
           asChild
           variant="navBtnLink"
@@ -111,60 +121,45 @@ const Navbar = () => {
             <GoBell />
           </Box>
         </IconButton>
-        {isWalletConnected ? (
-          <HStack
-            border="0.6px solid"
-            borderColor="bgPrimary"
-            bg="bgSecondary"
-            px={2}
-            py={1}
-            gap={2}
-            borderRadius="xl"
-          >
-            <HStack gap={2}>
-              <Avatar.Root size="2xs">
-                <Avatar.Fallback name="Person Name" />
-                <Avatar.Image src={ProfileImage} objectPosition="bottom" />
-              </Avatar.Root>
-              <Text color="textLight" fontSize="xs">
-                {truncateWalletAddress("0x4aF934569203874072030Ed9e")}
-              </Text>
-              <IconButton
-                aria-label="Copy Wallet Address"
-                size="xs"
-                variant="ghost"
-                p={0}
-                _hover={{
-                  bgColor: "bgPrimary",
-                }}
-                onClick={() => {
-                  copyToClipboard("0x4aF934569203874072030Ed9e");
-                }}
-              >
-                <CopyIcon />
+        <Stack display={{base: "flex", md: "none"}}>
+          {isWalletConnected ? (
+            <WalletConnected isMobileNav wallet={wallet} />
+          ): ( 
+            <ConnectWalletDialog>
+              <Dialog.Trigger asChild>
+                <IconButton aria-label="Connect Wallet" borderRadius="lg">
+                  <EmptyWalletIcon />
+                </IconButton>
+              </Dialog.Trigger>
+            </ConnectWalletDialog>
+          )}
+        </Stack>
+        <Stack display={{base: "none", md: "flex"}}>
+           {isWalletConnected ? (
+            <WalletConnected wallet={wallet} />
+          ) : (
+            <ConnectWalletDialog>
+              <Dialog.Trigger asChild>
+                <Button borderRadius="lg">
+                  Connect <EmptyWalletIcon />
+                </Button>
+              </Dialog.Trigger>
+            </ConnectWalletDialog>
+          )}
+        </Stack>
+        <MobileNavbar 
+          open={open} 
+          setOpen={setOpen} 
+          isWalletConnected={isWalletConnected}
+          wallet={wallet}
+          triggerElement={
+            <Drawer.Trigger asChild display={{md: "none"}}>
+              <IconButton>
+                <CgMenuRightAlt />
               </IconButton>
-            </HStack>
-            <IconButton
-              aria-label="Copy Wallet Address"
-              size="xs"
-              variant="ghost"
-              color="textSecondary"
-              _hover={{
-                bgColor: "bgPrimary",
-              }}
-            >
-              <TbCaretDownFilled />
-            </IconButton>
-          </HStack>
-        ) : (
-          <ConnectWalletDialog>
-            <Dialog.Trigger asChild>
-              <Button variant="subtle" borderRadius="lg">
-                Connect <EmptyWalletIcon />
-              </Button>
-            </Dialog.Trigger>
-          </ConnectWalletDialog>
-        )}
+            </Drawer.Trigger>
+          }
+        />
       </HStack>
     </HStack>
   );

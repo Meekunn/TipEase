@@ -1,7 +1,16 @@
 .active {
   background-color: #0d0d0d;
   color: white;
+  transition: "0.25s all ease-in-out";
 }
 .transitioning {
-  background-color: pink;
+  background-color: #0d0d0d;
+  color: white;
+  transition: "0.25s all ease-in-out";
+}
+
+@media (min-width: 48rem) {
+  .active {
+    transform: scale(1.05);
+  }
 }

@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { Container } from "@chakra-ui/react";
+import { WalletProvider } from "@/context/WalletContext";
+import { SendTipProvider } from "@/context/SendTipContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,11 +11,15 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">{children}</main>
-      <Footer />
-    </div>
+    <WalletProvider>
+      <SendTipProvider>
+        <Container minH="100vh" w="full" position="relative">
+          <Navbar />
+          <Container w="full" position="relative" top="91px">{children}</Container>
+          <Footer />
+        </Container>
+      </SendTipProvider>
+    </WalletProvider>
   );
 };
 

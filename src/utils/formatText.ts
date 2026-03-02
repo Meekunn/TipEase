@@ -40,6 +40,32 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
   }
 };
 
+export const pasteFromClipboard = async (): Promise<string | null> => {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      const text = await navigator.clipboard.readText();
+      return text;
+    } else {
+      // Fallback — focus an input and trigger paste manually
+      return new Promise((resolve) => {
+        const textArea = document.createElement("textarea");
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        document.execCommand("paste");
+        const text = textArea.value;
+        document.body.removeChild(textArea);
+        resolve(text || null);
+      });
+    }
+  } catch (error) {
+    console.error("Failed to paste from clipboard:", error);
+    return null;
+  }
+};
+
 export const hideValue = (value: string) => {
   const cleanValue = value.replace(/[,.$]/g, "");
   const len = cleanValue.length;

@@ -16,18 +16,33 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 import { VscCircleFilled } from "react-icons/vsc";
 import { RiEdit2Fill } from "react-icons/ri";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
+import { useState } from "react";
 
 interface PreviewTipProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setIsSending: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PreviewTip = ({ setStep }: PreviewTipProps) => {
+const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
+
+  const [isAgree, setIsAgree] = useState(false)
+
   const handleBackClick = () => {
     setStep(1);
   };
 
+  const sendTip = () => {
+    setIsSending(true)
+    const timer = setTimeout(() => {
+      setIsSending(false)
+      setStep(3)
+    }, 3500)
+
+    return () => clearTimeout(timer)
+  }
+
   return (
-    <VStack w="534px" gap={4}>
+    <VStack w="full" gap={4}>
       <VStack
         border="0.6px solid"
         borderColor="bgPrimary"
@@ -91,7 +106,7 @@ const PreviewTip = ({ setStep }: PreviewTipProps) => {
               <Text color="textSecondary" fontSize="sm">
                 Fee
               </Text>
-              <Icon fontSize="12px" color="textSecondary" pb={1}>
+              <Icon fontSize="18px" color="textSecondary" pb={1}>
                 <IoInformationCircleOutline />
               </Icon>
             </HStack>
@@ -196,7 +211,12 @@ const PreviewTip = ({ setStep }: PreviewTipProps) => {
         </VStack>
       </VStack>
       <HStack justify="start" w="full" my={2}>
-        <Switch.Root colorPalette="gray" size="lg">
+        <Switch.Root 
+          colorPalette="gray" 
+          size="lg"
+          checked={isAgree}
+          onCheckedChange={(e) => setIsAgree(e.checked)}
+        >
           <Switch.HiddenInput />
           <Switch.Control>
             <Switch.Thumb />
@@ -211,6 +231,9 @@ const PreviewTip = ({ setStep }: PreviewTipProps) => {
           </Switch.Label>
         </Switch.Root>
       </HStack>
+      <Button w="full" mt={16} variant="formBtn" onClick={sendTip} disabled={!isAgree}>
+        Send tip
+      </Button>
     </VStack>
   );
 };

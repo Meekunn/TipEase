@@ -1,6 +1,11 @@
-import { HStack, Text, VStack } from "@chakra-ui/react";
+import { HStack, Text, VStack, Avatar } from "@chakra-ui/react";
 
-const WalletCard = ({ icon, label, description, extra }: WalletCardProps) => {
+interface IWalletCard {
+  connectWallet: (platform: string) => void;
+  card: WalletCardProps
+}
+
+const WalletCard = ({ card, connectWallet }: IWalletCard) => {
   return (
     <HStack
       w="full"
@@ -15,20 +20,30 @@ const WalletCard = ({ icon, label, description, extra }: WalletCardProps) => {
       _hover={{
         bg: "bgPrimary",
       }}
+      onClick={() => connectWallet(card.label.toLowerCase())}
     >
       <HStack gap={2} align="center">
-        {icon}
+        <AvatarCard image={card.icon} name={card.label} />
         <VStack gap={2} align="start">
-          <Text>{label}</Text>
+          <Text>{card.label}</Text>
           <Text color="textLight" fontSize="xs">
-            {description}
+            {card.description}
           </Text>
         </VStack>
       </HStack>
       <HStack justify="end" align="center">
-        {extra}
+        {card.extra}
       </HStack>
     </HStack>
+  );
+};
+
+const AvatarCard = ({ image, name }: { image: string; name: string }) => {
+  return (
+    <Avatar.Root>
+      <Avatar.Fallback name={name} />
+      <Avatar.Image src={image} />
+    </Avatar.Root>
   );
 };
 

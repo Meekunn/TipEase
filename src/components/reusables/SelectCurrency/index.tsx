@@ -1,14 +1,16 @@
 import { HStack, Portal, Select, type ListCollection } from "@chakra-ui/react";
 import SelectCurrencyTrigger from "./SelectCurrencyTrigger";
 
-const SelectCurrency = ({ currencies }: { currencies: ListCollection }) => {
+const SelectCurrency = ({ currencies, value, onValueChange }: { currencies: ListCollection, value?: string, onValueChange: (value:string) => void }) => {
   return (
     <Select.Root
       positioning={{ sameWidth: false }}
       collection={currencies}
       size="sm"
       width="fit-content"
-      defaultValue={["react"]}
+      defaultValue={["usdt"]}
+      value={value ? [value] : undefined}
+      onValueChange={(e) => onValueChange(e.value[0])}
     >
       <Select.HiddenSelect />
       <Select.Control>
