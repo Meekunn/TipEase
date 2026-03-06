@@ -147,7 +147,7 @@ const WalletDetails = () => {
         </VStack>
         <WithdrawDialog>
           <Dialog.Trigger asChild>
-            <Button w="full" variant="formBtnOutline" py={2} fontSize="sm">
+            <Button w="full" variant="solid" borderRadius="4xl" py={2} fontSize="sm">
               <LiaWalletSolid />
               Withdraw
             </Button>

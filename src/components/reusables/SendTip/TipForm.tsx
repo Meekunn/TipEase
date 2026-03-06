@@ -28,9 +28,11 @@ interface TipFormProps {
   btnText: string;
   setStep?: React.Dispatch<React.SetStateAction<number>>
   margintop?: number;
+  btnPaddingY?: number;
+  btnFontSize?: string;
 }
 
-const TipForm = ({ border = true, btnText, setStep, margintop = 16 }: TipFormProps) => {
+const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps) => {
 
   const {wallet} =  useWallet()
   const {updateSendTipForm, sendTipForm} = useSendTip()
@@ -217,7 +219,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16 }: TipFormPro
           )}
         />
       </HStack>
-      <Button w="full" variant="formBtn" type="submit" mt={margintop}>
+      <Button w="full" variant="formBtn" type="submit" mt={margintop} py={btnPaddingY} fontSize={btnFontSize}>
         {btnText}
       </Button>
     </form>

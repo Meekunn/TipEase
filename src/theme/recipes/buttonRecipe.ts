@@ -41,7 +41,7 @@ const buttonRecipe = defineRecipe({
         boxShadow: "2xl",
         _hover: {
           transform: "scale(1.05)",
-        },
+        }
       },
       formBtnOutline: {
         h: "fit-content",

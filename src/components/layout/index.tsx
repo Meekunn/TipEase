@@ -13,9 +13,16 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <WalletProvider>
       <SendTipProvider>
-        <Container minH="100vh" w="full" position="relative">
+        <Container
+          minH="100vh"
+          w="full"
+          display="flex"
+          flexDirection="column"
+        >
           <Navbar />
-          <Container w="full" position="relative" top="91px">{children}</Container>
+          <Container w="full" flex={1} pt="91px">
+            {children}
+          </Container>
           <Footer />
         </Container>
       </SendTipProvider>

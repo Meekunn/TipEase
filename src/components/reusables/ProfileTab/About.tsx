@@ -1,11 +1,23 @@
 import { HStack, Link, Text, VStack, Icon, IconButton } from "@chakra-ui/react";
+import { useState } from "react";
 import { VscLink } from "react-icons/vsc";
 import { TbBrandInstagramFilled } from "react-icons/tb";
 import { FaXTwitter, FaTiktok } from "react-icons/fa6";
 import { CopyIcon } from "../icon";
 import { copyToClipboard } from "@/utils/formatText";
 
+const CHAR_LIMIT = 120;
+
+const bio =
+  "Hi I'm Abi. Digital creator and blockchain enthusiast. w9hwhwfhfhwfwhgwhjej5u5eyjw4yjegiadngdnaghaegdnbeheghgwhfwfhwfbegghsukwjjnhdskaiolabhsjjhuyislodmnszhjsvznjksnj";
+
 const About = () => {
+  const [expanded, setExpanded] = useState(false);
+
+  const isLong = bio.length > CHAR_LIMIT;
+  const displayText =
+    !expanded && isLong ? bio.slice(0, CHAR_LIMIT) + "..." : bio;
+
   return (
     <VStack
       bg="white"
@@ -17,16 +29,22 @@ const About = () => {
       w="full"
       align="start"
     >
-      <VStack gap={2} fontSize="sm" align="start">
+      <VStack gap={2} fontSize="sm" align="start" w="full">
         <Text color="textSecondary">About</Text>
-        <Text mt={2} lineHeight="20px">
-          Hi I&apos;m Abi. Digital creator and blockchain enthusiast.
-          fw9hwhwfhfhwfwhgwhjej5u5eyjw4yjegiadngdnagh aegdnb
-          geheghgwhfwfhwfbeg...
+        <Text mt={2} lineHeight="20px" w="full" wordBreak="break-word">
+          {displayText}
         </Text>
-        <Link as="button" variant="underline" fontSize="xs" color="blue.500">
-          Show more
-        </Link>
+        {isLong && (
+          <Link
+            as="button"
+            variant="underline"
+            fontSize="xs"
+            color="blue.500"
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            {expanded ? "Show less" : "Show more"}
+          </Link>
+        )}
       </VStack>
       <VStack gap={1} align="start" mt={2}>
         <Text color="textSecondary" fontSize="xs">

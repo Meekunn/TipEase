@@ -25,7 +25,7 @@ const tabsSlotRecipe = defineSlotRecipe({
             _horizontal: {
               layerStyle: "indicator.bottom",
               "--indicator-offset-y": "-1px",
-              "--indicator-color": "customPrimary",
+              "--indicator-color": "#0D0D0D",
               borderBottomWidth: "3px",
             },
           },
