@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, type JSX } from "react";
 import { BitcoinIcon, ClipboardIcon, EthereumIcon, TronIcon, UsdtIcon } from "@/components/reusables/icon";
 import SelectCurrency from "@/components/reusables/SelectCurrency";
 import {
@@ -32,7 +32,7 @@ interface TipFormProps {
   btnFontSize?: string;
 }
 
-const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps) => {
+const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps): JSX.Element => {
 
   const {wallet} =  useWallet()
   const {updateSendTipForm, sendTipForm} = useSendTip()

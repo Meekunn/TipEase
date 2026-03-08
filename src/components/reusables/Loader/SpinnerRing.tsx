@@ -1,4 +1,3 @@
-// src/components/reusables/Loader/SpinnerRing.tsx
 import { Box } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
