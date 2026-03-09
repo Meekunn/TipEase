@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { VscCircleFilled } from "react-icons/vsc";
 import { pasteFromClipboard } from "@/utils/formatText";
-import { useWallet } from "@/hooks/useWallet";
+// import { useWallet } from "@/hooks/useWallet";
 import { useSendTip } from "@/hooks/useSendTip";
 import { Controller, useForm } from "react-hook-form";
 
@@ -34,7 +34,7 @@ interface TipFormProps {
 
 const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps): JSX.Element => {
 
-  const {wallet} =  useWallet()
+  // const {wallet} =  useWallet()
   const {updateSendTipForm, sendTipForm} = useSendTip()
   const currencies = createListCollection({
     items: [
@@ -51,7 +51,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
     defaultValues: {
       coin: sendTipForm.coin,
       amount: sendTipForm.amount,
-      address: sendTipForm.address,
+      recipientAddress: sendTipForm.recipientAddress,
       note: sendTipForm.note,
       anonymous: sendTipForm.anonymous,
     }
@@ -67,7 +67,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
 
   const pasteTag = async () => {
     const text = await pasteFromClipboard();
-    if (text) setValue("address", text);
+    if (text) setValue("recipientAddress", text);
   }
 
   return (
@@ -130,7 +130,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
                   </Tag.StartElement>
                   <Tag.Label>Min</Tag.Label>
                 </Tag.Root>
-                <Box cursor="pointer" onClick={() => setValue("amount", wallet.balance.toString())}>
+                <Box cursor="pointer" onClick={() => setValue("amount", "200")}>
                   <Tag.Root variant="roundTag" colorPalette="green">
                     <Tag.StartElement>
                       <VscCircleFilled />
@@ -145,7 +145,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
                 Bal:{" "}
                 <Text as="span" color="textPrimary">
                   {" "}
-                  {wallet.balance}
+                  200
                 </Text>
               </Text>
               <Text fontSize="sm" color="textSecondary">
@@ -154,7 +154,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
             </HStack>
           </VStack>
         
-        <Field.Root invalid={!!errors.address}>
+        <Field.Root invalid={!!errors.recipientAddress}>
           <Field.Label color="textSecondary">Address</Field.Label>
           <InputGroup
             flex="1"
@@ -176,9 +176,9 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
               </Button>
             }
           >
-            <Input {...register("address", { required: "Recipient address is required" })} placeholder="Add recipient address" />
+            <Input {...register("recipientAddress", { required: "Recipient address is required" })} placeholder="Add recipient address" />
           </InputGroup>
-          {errors.address && <Field.ErrorText>{errors.address.message}</Field.ErrorText>}
+          {errors.recipientAddress && <Field.ErrorText>{errors.recipientAddress.message}</Field.ErrorText>}
         </Field.Root>
         <Field.Root>
           <Field.Label color="textSecondary">Message (Optional)</Field.Label>

@@ -3,16 +3,23 @@ import { createContext, useState, type ReactNode } from "react";
 interface SendTipContextType {
   sendTipForm: ISendTipForm;
   updateSendTipForm: (details: Partial<ISendTipForm>) => void;
-  clearSendTipForm: () => void
+  clearSendTipForm: () => void;
 }
 
 export const SendTipContext = createContext<SendTipContextType | undefined>(undefined);
 
-export function SendTipProvider({ children }: { children: ReactNode }) {
+const defaultForm: ISendTipForm = {
+  coin: "usdt",
+  amount: "",
+  recipientAddress: "",
+  note: "",
+  anonymous: false,
+};
 
+export function SendTipProvider({ children }: { children: ReactNode }) {
   const [sendTipForm, setSendTipForm] = useState<ISendTipForm>(() => {
     const stored = localStorage.getItem("tipease_send_tip_form");
-    return stored ? JSON.parse(stored) : { coin: "usdt", amount: "", address: "", note: "", anonymous: false };
+    return stored ? JSON.parse(stored) : defaultForm;
   });
 
   const updateSendTipForm = (details: Partial<ISendTipForm>) => {
@@ -24,12 +31,12 @@ export function SendTipProvider({ children }: { children: ReactNode }) {
   };
 
   const clearSendTipForm = () => {
-    setSendTipForm({ coin: "", amount: "", address: "", note: "", anonymous: false})
-    localStorage.removeItem("tipease_send_tip_form")
-  }
+    setSendTipForm(defaultForm);
+    localStorage.removeItem("tipease_send_tip_form");
+  };
 
   return (
-    <SendTipContext.Provider value={{sendTipForm, updateSendTipForm, clearSendTipForm}}>
+    <SendTipContext.Provider value={{ sendTipForm, updateSendTipForm, clearSendTipForm }}>
       {children}
     </SendTipContext.Provider>
   );

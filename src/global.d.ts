@@ -22,18 +22,35 @@ interface StepProps {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
+interface IUser {
+  id: string;
+  walletAddress: string;
+  tagName: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+  instagram: string | null;
+  twitter: string | null;
+  tiktok: string | null;
+  showWalletAddress: boolean;
+  createdAt: string;
+}
+
 interface IWallet {
-  address: string;
-  name: string;
-  image: string;
-  platform: string;
-  balance: number;
+  token: string;
+  user: IUser;
 }
 
 interface ISendTipForm {
   coin: string;
   amount: string;
-  address: string;
-  note?: string;
+  recipientAddress: string;
+  note: string;
   anonymous: boolean;
+}
+
+interface IPreference {
+  defaultCurrency: string;
+  minTipAmount: string;
+  defaultThankYouMessage: string | null;
+  autoAcceptTips: boolean;
 }

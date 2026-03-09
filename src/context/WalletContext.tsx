@@ -1,7 +1,8 @@
 import { createContext, useState, type ReactNode } from "react";
 
 interface WalletContextType {
-  wallet: IWallet;
+  wallet: IWallet | null;
+  isConnected: boolean;
   updateWallet: (details: Partial<IWallet>) => void;
   deleteWallet: () => void;
 }
@@ -9,27 +10,28 @@ interface WalletContextType {
 export const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-
-  const [wallet, setWallet] = useState<IWallet>(() => {
+  const [wallet, setWallet] = useState<IWallet | null>(() => {
     const stored = localStorage.getItem("tipease_wallet");
-    return stored ? JSON.parse(stored) : { address: "", name: "", image: "", platform: "", balance: 0 };
+    return stored ? JSON.parse(stored) : null;
   });
+
+  const isConnected = !!wallet?.user.walletAddress;
 
   const updateWallet = (details: Partial<IWallet>) => {
     setWallet((prev) => {
-      const updated = { ...prev, ...details };
+      const updated = { ...prev, ...details } as IWallet;
       localStorage.setItem("tipease_wallet", JSON.stringify(updated));
       return updated;
     });
   };
 
   const deleteWallet = () => {
-    setWallet({ address: "", name: "", image: "", platform: "", balance: 0 })
-    localStorage.removeItem("tipease_wallet")
-  }
+    setWallet(null);
+    localStorage.removeItem("tipease_wallet");
+  };
 
   return (
-    <WalletContext.Provider value={{wallet, updateWallet, deleteWallet}}>
+    <WalletContext.Provider value={{ wallet, isConnected, updateWallet, deleteWallet }}>
       {children}
     </WalletContext.Provider>
   );

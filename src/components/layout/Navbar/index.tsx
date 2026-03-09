@@ -29,7 +29,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [isNotification] = useState(false);
 
-  const isWalletConnected = !!wallet.address;
+  const isWalletConnected = !!wallet?.token;
 
   return (
     <HStack
@@ -152,7 +152,7 @@ const Navbar = () => {
           open={open} 
           setOpen={setOpen} 
           isWalletConnected={isWalletConnected}
-          wallet={wallet}
+          wallet={wallet!}
           triggerElement={
             <Drawer.Trigger asChild display={{md: "none"}}>
               <IconButton>

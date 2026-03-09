@@ -1,7 +1,7 @@
 export const truncateWalletAddress = (
   str: string,
   firstChars: number = 6,
-  lastChars: number = 4
+  lastChars: number = 4,
 ): string => {
   if (!str || str.length <= firstChars + lastChars) {
     return str;
@@ -15,7 +15,6 @@ export const truncateWalletAddress = (
 
 export const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
-    // Use modern Clipboard API if available
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
       return true;
@@ -42,24 +41,8 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
 
 export const pasteFromClipboard = async (): Promise<string | null> => {
   try {
-    if (navigator.clipboard && window.isSecureContext) {
-      const text = await navigator.clipboard.readText();
-      return text;
-    } else {
-      // Fallback — focus an input and trigger paste manually
-      return new Promise((resolve) => {
-        const textArea = document.createElement("textarea");
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        document.execCommand("paste");
-        const text = textArea.value;
-        document.body.removeChild(textArea);
-        resolve(text || null);
-      });
-    }
+    const text = await navigator.clipboard.readText();
+    return text;
   } catch (error) {
     console.error("Failed to paste from clipboard:", error);
     return null;
