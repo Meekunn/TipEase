@@ -17,7 +17,10 @@ import WalletConnect from "@/assets/wallet-connect.png";
 import AllWallets from "@/assets/other-wallet.png";
 import { MdOutlineQrCodeScanner } from "react-icons/md";
 import { useWallet } from "@/hooks/useWallet";
-import ProfileImage from "@/assets/profile-image.jpg";
+import { useConnect, useConnectors, useSignMessage } from "wagmi";
+import { generateNonce, SiweMessage } from 'siwe';
+import { api } from "@/lib/api";
+import Loader from "../Loader";
 
 interface ConnectWalletDialogProps {
   children: ReactNode;
@@ -25,26 +28,79 @@ interface ConnectWalletDialogProps {
 
 const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
 
-  const {updateWallet} = useWallet()
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
-  const [open, setOpen] = useState(false)
+  const { updateWallet } = useWallet();
+  const { mutateAsync: connectAsync} = useConnect();
+  const connectors = useConnectors()
+  const { mutateAsync: signMessageAsync } = useSignMessage();
 
-  const connectWallet = (platform: string) => {
-    updateWallet({
-      address: "0x4aF934569203874072030Ed9e",
-      name: "TipEase Wallet",
-      image: ProfileImage,
-      platform: platform,
-      balance: 246.32
-    })
-    setOpen(false)
-  }
+  const connectWallet = async () => {
+    try { 
+      setIsLoading(true);
+      setLoadingText('Connecting wallet...');
+
+      const {accounts, chainId } = await connectAsync({ connector: connectors[0] });
+      const address = accounts[0];
+      console.log('1. Connected:', address, chainId);
+
+      setLoadingText('Signing message...');
+
+      const nonce = generateNonce();
+      console.log('2. Generated nonce:', nonce);
+
+      console.log('Inputs to SiweMessage:', {
+        domain: window.location.host,
+        address,
+        uri: window.location.origin,
+        chainId,
+        nonce,
+      });
+
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address,
+        statement: 'Sign in to TipEase',
+        uri: window.location.origin,
+        version: '1',
+        chainId,
+        nonce,
+      });
+
+      const preparedMessage = message.prepareMessage();
+      console.log('3. Prepared message:', message);
+
+      const signature = await signMessageAsync({ message: preparedMessage });
+      console.log('4. Got signature:', signature);
+
+      setLoadingText('Verifying...');
+
+      const { token, user } = await api.post('/auth/verify', {
+        message: preparedMessage,
+        signature,
+      });
+      console.log('5. Verified:', token, user);
+
+      localStorage.setItem('tipease_token', token);
+      updateWallet(user);
+      setOpen(false);
+
+    } catch (error) {
+      console.error('Failed at step:', error);
+    } finally {
+      setIsLoading(false);
+      setLoadingText('');
+    }
+  };
 
   const walletOptions: WalletCardProps[] = [
     {
       icon: MetaMask,
       label: "MetaMask",
       description: "Connect to your MetaMask wallet.",
+      isDisabled: false,
     },
     {
       icon: TrustWallet,
@@ -99,44 +155,47 @@ const ConnectWalletDialog = ({ children }: ConnectWalletDialogProps) => {
     },
   ];
   return (
-    <Dialog.Root placement="center" lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
-      {children}
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content bg="white" borderRadius="xl" p={4} gap={6}>
-            <Dialog.CloseTrigger asChild>
-              <CloseButton
-                size="sm"
-                variant="solid"
-                borderRadius="full"
-                _hover={{
-                  bgColor: "bgPrimary",
-                }}
-              />
-            </Dialog.CloseTrigger>
-            <Dialog.Header p={2} justifyContent="center">
-              <Dialog.Title fontWeight="medium" fontSize="xl">
-                Connect Wallet
-              </Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body p={0}>
-              <VStack gap={3}>
-                <For each={walletOptions}>
-                  {(wallet, index) => (
-                    <WalletCard
-                      key={index}
-                      card={wallet}
-                      connectWallet={connectWallet}
-                    />
-                  )}
-                </For>
-              </VStack>
-            </Dialog.Body>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
+    <>
+    <Loader open={isLoading} text={loadingText} />
+      <Dialog.Root placement="center" lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
+        {children}
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content bg="white" borderRadius="xl" p={4} gap={6}>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton
+                  size="sm"
+                  variant="solid"
+                  borderRadius="full"
+                  _hover={{
+                    bgColor: "bgPrimary",
+                  }}
+                />
+              </Dialog.CloseTrigger>
+              <Dialog.Header p={2} justifyContent="center">
+                <Dialog.Title fontWeight="medium" fontSize="xl">
+                  Connect Wallet
+                </Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body p={0}>
+                <VStack gap={3}>
+                  <For each={walletOptions}>
+                    {(wallet, index) => (
+                      <WalletCard
+                        key={index}
+                        card={wallet}
+                        connectWallet={connectWallet}
+                      />
+                    )}
+                  </For>
+                </VStack>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    </>
   );
 };
 

@@ -1,18 +1,26 @@
-import { useState } from "react";
 import { Box, Button, Heading, HStack, Icon, Text, VStack } from "@chakra-ui/react";
 import { PiSealCheckFill } from "react-icons/pi";
 import { FaTimesCircle } from "react-icons/fa";
 import { BnbIcon, SendIcon, UsdtIcon } from "../icon";
 import { useSendTip } from "@/hooks/useSendTip";
+import { useGetSentTips } from "@/lib/queries";
+import { useCoinPrices } from "@/hooks/useCoinPrices";
 
-const TransactionSummary = ({setStep}: {setStep: React.Dispatch<React.SetStateAction<number>>;}) => {
+interface ITransactionSummary {
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  isSuccess: boolean;
+}
 
-  const { clearSendTipForm } = useSendTip()
+const TransactionSummary = ({setStep, isSuccess}: ITransactionSummary) => {
 
-  const [isSuccess] = useState(true);
+  const { clearSendTipForm, sendTipForm } = useSendTip();
+  const { data: sentTips } = useGetSentTips();
+  const { getUsdValue } = useCoinPrices();
+
+  const latestTip = sentTips?.[0];
 
   const backToHome = () => {
-    clearSendTipForm()
+    clearSendTipForm();
     setStep(1);
   };
 
@@ -51,17 +59,21 @@ const TransactionSummary = ({setStep}: {setStep: React.Dispatch<React.SetStateAc
               <Text color="textSecondary" fontSize="sm">
                 Congratulations! You have tipped{" "}
                 <Box as="span" color="textPrimary">
-                  @nerdthejohn
+                  {sendTipForm.recipientAddress
+                    ? `${sendTipForm.recipientAddress.slice(0, 6)}...`
+                    : "recipient"}
                 </Box>
               </Text>
             </VStack>
           </VStack>
-          <Text color="textSecondary" fontSize="sm">
-            Transaction ID:
-            <Box as="span" color="blue.500" ml={1}>
-              TXN-23141312
-            </Box>
-          </Text>
+          {latestTip?.id && (
+            <Text color="textSecondary" fontSize="sm">
+              Transaction ID:
+              <Box as="span" color="blue.500" ml={1}>
+                {latestTip.id}
+              </Box>
+            </Text>
+          )}
           <VStack
             gap={8}
             borderTop="0.6px dashed"
@@ -83,9 +95,9 @@ const TransactionSummary = ({setStep}: {setStep: React.Dispatch<React.SetStateAc
                 fontWeight="semibold"
                 lineHeight="100%"
               >
-                0.3231 ETH
+                {latestTip?.amount} {latestTip?.coin.toUpperCase()}
               </Heading>
-              <Text color="textSecondary">≈ $350.06</Text>
+              <Text color="textSecondary"> ≈ ${getUsdValue(sendTipForm.coin, sendTipForm.amount)} USD</Text>
             </VStack>
           </VStack>
         </VStack>
@@ -96,8 +108,8 @@ const TransactionSummary = ({setStep}: {setStep: React.Dispatch<React.SetStateAc
           Back to home
         </Button>
         {isSuccess && (
-          <Button w="full" variant="formBtnOutline">
-            View receipt
+          <Button asChild w="full" variant="formBtnOutline">
+            <a href={`https://sepolia.etherscan.io/tx/${latestTip?.txHash}`} target="_blank" rel="noopener noreferrer">View receipt</a>
           </Button>
         )}
       </VStack>

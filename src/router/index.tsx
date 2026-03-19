@@ -3,6 +3,7 @@ import Layout from "@/components/layout";
 import { createBrowserRouter } from "react-router";
 import Profile from "@/pages/Profile";
 import Support from "@/pages/Support";
+import ProtectedRoute from "@/components/reusables/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -16,9 +17,11 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: (
-      <Layout>
-        <Profile />
-      </Layout>
+      <ProtectedRoute>
+        <Layout>
+          <Profile />
+        </Layout>
+      </ProtectedRoute>
     ),
   },
   {

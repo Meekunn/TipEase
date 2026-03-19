@@ -23,17 +23,21 @@ import {
   EthereumIcon,
   SolanaIcon,
 } from "@/components/reusables/icon";
-import ProfileImage from "@/assets/profile-image.jpg";
 import { IoMdPower } from "react-icons/io";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import { LiaWalletSolid } from "react-icons/lia";
 import TokenValueCard from "./TokenValueCard";
 import WithdrawDialog from "../WithdrawDialog";
+import { useWallet } from "@/hooks/useWallet";
+import { useDisconnectWallet } from "@/hooks/useDisconnectWallet";
 
 const WalletDetails = () => {
+  const { wallet } = useWallet();
+  const {disconnectWallet} = useDisconnectWallet()
   const totalValue = "$15,963.70";
   const [showValue, setShowValue] = useState(false);
 
+  const walletAddress = wallet?.walletAddress ?? ""
   const tokens: TokenValueCardProps[] = [
     {
       tokenName: "Bitcoin",
@@ -84,10 +88,10 @@ const WalletDetails = () => {
             <HStack gap={2}>
               <Avatar.Root size="2xs">
                 <Avatar.Fallback name="Person Name" />
-                <Avatar.Image src={ProfileImage} objectPosition="bottom" />
+                <Avatar.Image src={wallet?.avatarUrl} objectPosition="bottom" />
               </Avatar.Root>
               <Text color="textLight" fontSize="xs">
-                {truncateWalletAddress("0x4aF934569203874072030Ed9e")}
+                {truncateWalletAddress(walletAddress)}
               </Text>
               <IconButton
                 aria-label="Copy Wallet Address"
@@ -98,7 +102,7 @@ const WalletDetails = () => {
                   bgColor: "bgPrimary",
                 }}
                 onClick={() => {
-                  copyToClipboard("0x4aF934569203874072030Ed9e");
+                  copyToClipboard(walletAddress);
                 }}
               >
                 <CopyIcon />
@@ -113,6 +117,7 @@ const WalletDetails = () => {
               _hover={{
                 bgColor: "red.100",
               }}
+              onClick={disconnectWallet}
             >
               <IoMdPower />
             </IconButton>

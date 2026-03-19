@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Field,
@@ -13,12 +13,36 @@ import {
 import { TbEdit } from "react-icons/tb";
 import { CopyIcon } from "../icon";
 import { copyToClipboard } from "@/utils/formatText";
+import { useWallet } from "@/hooks/useWallet";
+import { useGetUser } from "@/lib/queries";
+import { useUpdateUser } from "@/lib/mutations";
 
 const WalletSummary = () => {
-  const [tagName, setTagName] = useState("@abi");
-  const [walletAddress, setWalletAddress] = useState(
-    "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-  );
+
+  const {data: user, isLoading} = useGetUser();
+  const { mutate: updateUser, isPending } = useUpdateUser();
+  const { wallet } = useWallet();
+
+  const [isEditingTag, setIsEditingTag] = useState(false);
+  const [tagName, setTagName] = useState("");
+
+  const walletAddress = wallet?.walletAddress ?? ""
+
+  useEffect(() => {
+    if (user?.tagName) setTagName(user.tagName);
+  }, [user?.tagName]);
+
+  const handleSaveTagName = () => {
+    updateUser(
+      { tagName },
+      {
+        onSuccess: () => setIsEditingTag(false),
+        onError: () => console.error('Failed to update tag name'),
+      }
+    );
+  };
+
+  if (isLoading) return null;
 
   return (
     <VStack
@@ -50,10 +74,17 @@ const WalletSummary = () => {
                 color="textPrimary"
                 fontSize="2xs"
                 _hover={{ bgColor: "bgPrimary" }}
-                onClick={() => console.log("clicked")}
+                onClick={() => {
+                  if (isEditingTag) {
+                    handleSaveTagName();
+                  } else {
+                    setIsEditingTag(true);
+                  }
+                }}
+                loading={isPending}                
               >
                 <TbEdit />
-                Edit
+                {isEditingTag ? "Save" : "Edit"}
               </Button>
             }
           >
@@ -61,6 +92,7 @@ const WalletSummary = () => {
               placeholder="Add tag"
               fontSize="2xs"
               value={tagName}
+              disabled={!isEditingTag}
               onChange={(e) => setTagName(e.target.value)}
             />
           </InputGroup>
@@ -81,9 +113,7 @@ const WalletSummary = () => {
                 _hover={{
                   bgColor: "bgPrimary",
                 }}
-                onClick={() => {
-                  copyToClipboard("tipease.com/abidemi");
-                }}
+                onClick={() => copyToClipboard(walletAddress)}
               >
                 <CopyIcon />
               </IconButton>
@@ -99,7 +129,6 @@ const WalletSummary = () => {
                 bg: "bgSecondary",
                 color: "textSecondary",
               }}
-              onChange={(e) => setWalletAddress(e.target.value)}
             />
           </InputGroup>
         </Field.Root>
@@ -113,6 +142,10 @@ const WalletSummary = () => {
               size="lg"
               w="full"
               justifyContent="space-between"
+              checked={user?.showWalletAddress ?? true}
+              onCheckedChange={({ checked }) =>
+                updateUser({ showWalletAddress: checked })
+              }
             >
               <Switch.HiddenInput />
               <Switch.Label fontSize="xs" lineHeight="16px">

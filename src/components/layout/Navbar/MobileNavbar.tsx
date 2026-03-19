@@ -12,7 +12,7 @@ interface MobileNavbarProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isWalletConnected: boolean;
-  wallet: IWallet
+  wallet: IUser
 }
 
 const MobileNavbar = ({triggerElement, open, setOpen, isWalletConnected, wallet}: MobileNavbarProps) => {

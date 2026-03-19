@@ -1,17 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { createListCollection } from '@chakra-ui/react';
 import { useState } from 'react';
-import { BitcoinIcon, EthereumIcon, TronIcon, UsdtIcon } from '@/components/reusables/icon';
 import SelectCurrency from './index';
-
-const currencies = createListCollection({
-  items: [
-    { label: 'USDT', value: 'usdt', icon: <UsdtIcon /> },
-    { label: 'BTC', value: 'bitcoin', icon: <BitcoinIcon /> },
-    { label: 'TRX', value: 'tron', icon: <TronIcon /> },
-    { label: 'ETH', value: 'ethereum', icon: <EthereumIcon /> },
-  ],
-});
+import { cryptoCurrencyOptions } from '@/constants/currencies';
 
 const meta: Meta<typeof SelectCurrency> = {
   title: 'Reusables/SelectCurrency',
@@ -24,7 +14,7 @@ type Story = StoryObj<typeof SelectCurrency>;
 // Default — uncontrolled, just opens and selects
 export const Default: Story = {
   args: {
-    currencies,
+    currencies: cryptoCurrencyOptions,
     onValueChange: (value) => console.log('Selected:', value),
   },
 };
@@ -32,7 +22,7 @@ export const Default: Story = {
 // With a preselected value
 export const PreSelected: Story = {
   args: {
-    currencies,
+    currencies: cryptoCurrencyOptions,
     value: 'ethereum',
     onValueChange: (value) => console.log('Selected:', value),
   },
@@ -45,7 +35,7 @@ export const Controlled: Story = {
     return (
       <div>
         <SelectCurrency
-          currencies={currencies}
+          currencies={cryptoCurrencyOptions}
           value={selected}
           onValueChange={setSelected}
         />

@@ -1,10 +1,8 @@
 import { useRef, type JSX } from "react";
-import { BitcoinIcon, ClipboardIcon, EthereumIcon, TronIcon, UsdtIcon } from "@/components/reusables/icon";
 import SelectCurrency from "@/components/reusables/SelectCurrency";
 import {
   Box,
   Button,
-  createListCollection,
   Field,
   HStack,
   Input,
@@ -18,9 +16,14 @@ import {
 } from "@chakra-ui/react";
 import { VscCircleFilled } from "react-icons/vsc";
 import { pasteFromClipboard } from "@/utils/formatText";
-// import { useWallet } from "@/hooks/useWallet";
+import { useWallet } from "@/hooks/useWallet";
 import { useSendTip } from "@/hooks/useSendTip";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { usePreference } from "@/hooks/usePreference";
+import { cryptoCurrencyOptions } from "@/constants/currencies";
+import { ClipboardIcon } from "../icon";
+import { useWalletBalances } from "@/hooks/useWalletBalances";
+import { useCoinPrices } from "@/hooks/useCoinPrices";
 
 interface TipFormProps {
   children?: React.ReactNode;
@@ -34,20 +37,15 @@ interface TipFormProps {
 
 const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps): JSX.Element => {
 
-  // const {wallet} =  useWallet()
-  const {updateSendTipForm, sendTipForm} = useSendTip()
-  const currencies = createListCollection({
-    items: [
-      { label: "USDT", value: "usdt", icon: <UsdtIcon /> },
-      { label: "BTC", value: "bitcoin", icon: <BitcoinIcon /> },
-      { label: "TRX", value: "tron", icon: <TronIcon /> },
-      { label: "ETH", value: "ethereum", icon: <EthereumIcon /> },
-    ],
-  });
+  const { preference } = usePreference();
+  const {isConnected} = useWallet();
+  const {updateSendTipForm, sendTipForm} = useSendTip();
+  const {balances} = useWalletBalances();
+  const { getPrice } = useCoinPrices();
 
   const amountInputRef = useRef<HTMLInputElement>(null);
 
-  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<ISendTipForm>({
+  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<ISendTip>({
     defaultValues: {
       coin: sendTipForm.coin,
       amount: sendTipForm.amount,
@@ -57,8 +55,10 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
     }
   });
 
-  const onSubmit = (data: ISendTipForm) => {
-    console.log(data);
+  const selectedCoin = useWatch({ control, name: "coin" });
+  const currentBalance = balances[selectedCoin as keyof typeof balances];
+
+  const onSubmit = (data: ISendTip) => {
     updateSendTipForm(data);
     if(setStep) {
       setStep(2)
@@ -100,7 +100,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
                   name="coin"
                   control={control}
                   render={({ field }) => (
-                    <SelectCurrency currencies={currencies} onValueChange={(value) => field.onChange(value)}  />
+                    <SelectCurrency currencies={cryptoCurrencyOptions} onValueChange={(value) => field.onChange(value)}  />
                   )}
                 />
               </Field.Root>
@@ -124,13 +124,15 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
                 {errors.amount && <Field.ErrorText>{errors.amount.message}</Field.ErrorText>}
               </Field.Root>
               <HStack align="center" gap={2}>
-                <Tag.Root variant="roundTag" colorPalette="orange">
-                  <Tag.StartElement>
-                    <VscCircleFilled />
-                  </Tag.StartElement>
-                  <Tag.Label>Min</Tag.Label>
-                </Tag.Root>
-                <Box cursor="pointer" onClick={() => setValue("amount", "200")}>
+                <Box cursor="pointer" onClick={() => setValue("amount", preference.minTipAmount)}>
+                  <Tag.Root variant="roundTag" colorPalette="orange">
+                    <Tag.StartElement>
+                      <VscCircleFilled />
+                    </Tag.StartElement>
+                    <Tag.Label>Min</Tag.Label>
+                  </Tag.Root>
+                </Box>
+                <Box cursor="pointer" onClick={() => setValue("amount", currentBalance?.formatted ?? "0")}>
                   <Tag.Root variant="roundTag" colorPalette="green">
                     <Tag.StartElement>
                       <VscCircleFilled />
@@ -144,12 +146,14 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
               <Text fontSize="sm" color="textSecondary">
                 Bal:{" "}
                 <Text as="span" color="textPrimary">
-                  {" "}
-                  200
+                  {currentBalance
+                    ? Number(currentBalance.formatted).toFixed(4)
+                    : "0"}{" "}
+                  {currentBalance?.symbol}
                 </Text>
               </Text>
               <Text fontSize="sm" color="textSecondary">
-                1 USDT ≈ $1 USD
+                 1 {currentBalance?.symbol} ≈ ${getPrice(selectedCoin).toLocaleString()} USD
               </Text>
             </HStack>
           </VStack>
@@ -219,7 +223,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
           )}
         />
       </HStack>
-      <Button w="full" variant="formBtn" type="submit" mt={margintop} py={btnPaddingY} fontSize={btnFontSize}>
+      <Button w="full" variant="formBtn" type="submit" mt={margintop} py={btnPaddingY} fontSize={btnFontSize} disabled={!isConnected}>
         {btnText}
       </Button>
     </form>

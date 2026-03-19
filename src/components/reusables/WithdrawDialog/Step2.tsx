@@ -1,17 +1,10 @@
-import { Box, Button, ButtonGroup, createListCollection, Field, Input, InputGroup, Select, Tag, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, ButtonGroup, Field, Input, InputGroup, Select, Tag, Text, VStack } from "@chakra-ui/react"
 import { useState } from "react"
 import { BiCaretDown } from "react-icons/bi"
 import { VscCircleFilled } from "react-icons/vsc"
+import { currencyOptions } from "@/constants/currencies"
 
 const Step2 = ({setCurrentStep}: StepProps) => {
-
-  const tokens = createListCollection({
-    items: [
-      { value: "usd", label: "USD - US Dollar" },
-      { value: "cad", label: "CAD - Canadian Dollar" },
-      { value: "eur", label: "EUR - Euros" },
-    ],
-  })
 
   const [withdrawAmount, setWithdrawAmount] = useState("2")
 
@@ -23,7 +16,7 @@ const Step2 = ({setCurrentStep}: StepProps) => {
           <Text fontSize="xs" color="textSecondary">Choose the token and amount to withdraw</Text>
         </VStack>
         <VStack gap={6} w="full" align="start">
-          <Select.Root collection={tokens}>
+          <Select.Root collection={currencyOptions}>
             <Select.HiddenSelect />
             <Select.Label color="textSecondary" fontSize="xs">Select Token</Select.Label>
 
@@ -40,9 +33,9 @@ const Step2 = ({setCurrentStep}: StepProps) => {
 
             <Select.Positioner>
               <Select.Content>
-                {tokens.items.map((token) => (
-                    <Select.Item item={token} key={token.value}>
-                      {token.label}
+                {currencyOptions.items.map((currency) => (
+                    <Select.Item item={currency} key={currency.value}>
+                      {currency.label}
                       <Select.ItemIndicator />
                     </Select.Item>
                   ))}

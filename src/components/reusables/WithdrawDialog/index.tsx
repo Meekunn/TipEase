@@ -76,7 +76,7 @@ const WithdrawDialog = ({ children }: WithdrawDialogProps) => {
               <Dialog.Title>Withdraw</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+              <Grid templateColumns={{base: "repeat(4, 1fr)", md: "repeat(3, 1fr)"}} gap={2}>
                 <GridItem colSpan={1}>
                   <VStack borderRadius="xl" border="1px solid" borderColor="bgPrimary" bg="bgDark" p={4} gap={8} align="start" w="full">
                     <CustomSteps
@@ -85,7 +85,7 @@ const WithdrawDialog = ({ children }: WithdrawDialogProps) => {
                       setCurrentStep={setCurrentStep}
                     />
 
-                    <VStack bg="white" borderRadius="xl" border="1px solid" borderColor="bgPrimary" py={4} px={3} gap={4} align="start" w="full">
+                    <VStack bg="white" borderRadius="xl" border="1px solid" borderColor="bgPrimary" py={4} px={3} gap={4} align="start" w="full" display={{base: "none", md: "flex"}}>
                       <Text fontSize="xs">Tipping Summary</Text>
                       <VStack gap={3} align="start" w="full">
                         <HStack justify="space-between" align="center" gap={4} w="full">
@@ -101,7 +101,7 @@ const WithdrawDialog = ({ children }: WithdrawDialogProps) => {
                   </VStack>
                 </GridItem>
 
-                <GridItem colSpan={2}>
+                <GridItem colSpan={{base: 3, md: 2}}>
                   <VStack bg="white" borderRadius="xl" border="1px solid" borderColor="bgPrimary" p={4} w="full" h="full">
                     {currentStep === 0 && (
                       <Step1 setCurrentStep={setCurrentStep} />

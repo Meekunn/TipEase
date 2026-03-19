@@ -8,7 +8,7 @@ const SelectCurrency = ({ currencies, value, onValueChange }: { currencies: List
       collection={currencies}
       size="sm"
       width="fit-content"
-      defaultValue={["usdt"]}
+      defaultValue={["ethereum"]}
       value={value ? [value] : undefined}
       onValueChange={(e) => onValueChange(e.value[0])}
     >

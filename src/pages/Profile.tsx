@@ -11,16 +11,27 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { GoArrowLeft } from "react-icons/go";
-import ProfileImage from "@/assets/profile-image.jpg";
 import CoverImage from "@/assets/cover-image.jpg";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
 import { CopyIcon } from "@/components/reusables/icon";
 import ProfileTab from "@/components/reusables/ProfileTab";
 import PreferenceTab from "@/components/reusables/PreferenceTab";
+import { useWallet } from "@/hooks/useWallet";
+import { useState } from "react";
+import EditProfileDialog from "@/components/reusables/ProfileTab/EditProfileDialog";
+import FallbackImage from "@/assets/default_avatar_1.png"
 
 const Profile = () => {
+
+  const {wallet} = useWallet();
+  const [openDialog, setOpenDialog] = useState(false)
+
+  const walletAddress = wallet?.walletAddress ?? ""
+  const tagName = wallet?.tagName ?? ""
+  const profileImage = wallet?.avatarUrl ?? FallbackImage
+
   return (
-    <VStack p={0} >
+    <VStack p={0}>
       <Center
         bg="white"
         pt={9}
@@ -45,10 +56,9 @@ const Profile = () => {
             </IconButton>
             <HStack gap={2}>
               <Avatar.Root size={{base: "lg" , md: "2xl"}}>
-                <Avatar.Fallback name="Person Name" />
-                <Avatar.Image src={ProfileImage} objectPosition="bottom" />
+                <Avatar.Image src={profileImage} objectPosition="bottom" />
               </Avatar.Root>
-              <Text fontSize={{base: "md", md: "xl"}}>@ abí</Text>
+              <Text fontSize={{base: "md", md: "xl"}}>{tagName}</Text>
             </HStack>
           </HStack>
           <VStack w="full" position="relative">
@@ -72,16 +82,16 @@ const Profile = () => {
                   boxSize={{base: 24, md: 36}}
                   borderRadius="full"
                   border={{base: "6px solid white", md: "10px solid white"}}
-                  src={ProfileImage}
+                  src={profileImage}
                   objectFit="cover"
                   objectPosition="bottom"
                 />
                 <VStack align="start" gap={{base: 0, md: 1}} pt={{base: 4, md: 0}}>
-                  <Text fontSize={{base: "md", md: "xl"}}>@ abí</Text>
+                  <Text fontSize={{base: "md", md: "xl"}}>{tagName}</Text>
                   <HStack gap={2}>
                     <Text color="textSecondary" fontSize={{base: "xs", md: "sm"}}>
                       {truncateWalletAddress(
-                        "0x4aF934569203874072030Ed9e",
+                        walletAddress,
                         6,
                         8
                       )}
@@ -95,7 +105,7 @@ const Profile = () => {
                         bgColor: "bgPrimary",
                       }}
                       onClick={() => {
-                        copyToClipboard("0x4aF934569203874072030Ed9e");
+                        copyToClipboard(walletAddress);
                       }}
                     >
                       <CopyIcon />
@@ -103,7 +113,7 @@ const Profile = () => {
                   </HStack>
                 </VStack>
               </HStack>
-              <Button variant="subtle" borderRadius="xl" size="sm">
+              <Button variant="subtle" borderRadius="xl" size="sm" onClick={() => setOpenDialog(true)}>
                 Edit profile
               </Button>
             </HStack>
@@ -122,6 +132,8 @@ const Profile = () => {
           </Tabs.Content>
         </Tabs.Root>
       </Center>
+
+     <EditProfileDialog open={openDialog} setOpen={setOpenDialog} />     
     </VStack>
   );
 };

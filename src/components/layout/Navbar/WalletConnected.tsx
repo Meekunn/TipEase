@@ -1,5 +1,5 @@
 import { CopyIcon } from "@/components/reusables/icon";
-import { useWallet } from "@/hooks/useWallet";
+import { useDisconnectWallet } from "@/hooks/useDisconnectWallet";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
 import { Avatar, Button, HStack, IconButton, Portal, Popover, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
@@ -7,7 +7,7 @@ import { TbCaretDownFilled } from "react-icons/tb";
 import { VscDebugDisconnect } from "react-icons/vsc";
 
 interface IWalletConnected {
-  wallet: IWallet;
+  wallet: IUser | null;
   isMobileNav?: boolean;
   addrFirstChars?: number;
   addrLastChars?: number
@@ -15,7 +15,7 @@ interface IWalletConnected {
 
 const WalletPopover = ({children}: {children: ReactNode}) => {
 
-  const {deleteWallet} = useWallet()
+  const {disconnectWallet} = useDisconnectWallet()
   
   return (
     <Popover.Root>
@@ -27,7 +27,7 @@ const WalletPopover = ({children}: {children: ReactNode}) => {
           <Popover.Content w="fit">
             <Popover.Arrow />
             <Popover.Body >
-              <Button colorPalette="red" variant="surface" onClick={deleteWallet}>Disconnect <VscDebugDisconnect /></Button>
+              <Button colorPalette="red" variant="solid" onClick={disconnectWallet}>Disconnect <VscDebugDisconnect /></Button>
             </Popover.Body>
           </Popover.Content>
         </Popover.Positioner>
@@ -37,7 +37,7 @@ const WalletPopover = ({children}: {children: ReactNode}) => {
 }
 
 
-const WalletConnected = ({wallet, isMobileNav = false, addrFirstChars = 6, addrLastChars =  4}: IWalletConnected) => {
+const WalletConnected = ({wallet, isMobileNav = false, addrFirstChars = 6, addrLastChars = 4}: IWalletConnected) => {
   return (
     <>
       <HStack
@@ -51,23 +51,19 @@ const WalletConnected = ({wallet, isMobileNav = false, addrFirstChars = 6, addrL
       >
         <HStack gap={2}>
           <Avatar.Root size="2xs">
-            <Avatar.Fallback name={wallet.name} />
-            <Avatar.Image src={wallet.image} objectPosition="bottom" />
+            <Avatar.Fallback name={wallet?.tagName ?? wallet?.walletAddress} />
+            <Avatar.Image src={wallet?.avatarUrl ?? '/avatar.png'} objectPosition="bottom" />
           </Avatar.Root>
           <Text color="textLight" fontSize="xs" display={isMobileNav ? "none": "inline-block"}>
-            {truncateWalletAddress(wallet.address, addrFirstChars, addrLastChars)}
+            {truncateWalletAddress(wallet?.walletAddress ?? '', addrFirstChars, addrLastChars)}
           </Text>
           <IconButton
             aria-label="Copy Wallet Address"
             size="xs"
             variant="ghost"
             p={0}
-            _hover={{
-              bgColor: "bgPrimary",
-            }}
-            onClick={() => {
-              copyToClipboard(wallet.address);
-            }}
+            _hover={{ bgColor: "bgPrimary" }}
+            onClick={() => copyToClipboard(wallet?.walletAddress ?? '')}
             display={isMobileNav ? "none": "inline-flex"}
           >
             <CopyIcon />
@@ -79,17 +75,14 @@ const WalletConnected = ({wallet, isMobileNav = false, addrFirstChars = 6, addrL
             size="xs"
             variant="ghost"
             color="textSecondary"
-            _hover={{
-              bgColor: "bgPrimary",
-            }}
+            _hover={{ bgColor: "bgPrimary" }}
           >
             <TbCaretDownFilled />
           </IconButton>
         </WalletPopover>
       </HStack>
-      
     </>
-  )
-}
+  );
+};
 
 export default WalletConnected

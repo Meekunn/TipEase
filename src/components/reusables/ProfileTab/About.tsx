@@ -5,18 +5,23 @@ import { TbBrandInstagramFilled } from "react-icons/tb";
 import { FaXTwitter, FaTiktok } from "react-icons/fa6";
 import { CopyIcon } from "../icon";
 import { copyToClipboard } from "@/utils/formatText";
+import { useGetUser } from "@/lib/queries";
 
 const CHAR_LIMIT = 120;
 
-const bio =
-  "Hi I'm Abi. Digital creator and blockchain enthusiast. w9hwhwfhfhwfwhgwhjej5u5eyjw4yjegiadngdnaghaegdnbeheghgwhfwfhwfbegghsukwjjnhdskaiolabhsjjhuyislodmnszhjsvznjksnj";
-
 const About = () => {
+
+  const {data: user, isLoading} = useGetUser();
   const [expanded, setExpanded] = useState(false);
+
+  const bio = user?.bio ?? "Edit your profile to add a bio"
+  const profileLink = user?.tagName ? `tipease.com/${user.tagName}` : '';
 
   const isLong = bio.length > CHAR_LIMIT;
   const displayText =
-    !expanded && isLong ? bio.slice(0, CHAR_LIMIT) + "..." : bio;
+    !expanded && isLong ? bio.slice(0, CHAR_LIMIT) + " ..." : bio;
+
+  if (isLoading) return null;
 
   return (
     <VStack
@@ -55,7 +60,7 @@ const About = () => {
             <VscLink />
           </Icon>
           <Link variant="underline" fontSize="sm" color="blue.500">
-            tipease.com/abidemi
+            {profileLink}
           </Link>
           <IconButton
             aria-label="Copy Profile Link"
@@ -74,26 +79,26 @@ const About = () => {
           </IconButton>
         </HStack>
       </VStack>
-      <VStack gap={2} align="start" fontSize="sm">
+      <VStack gap={2} align="start" fontSize="sm" display={user?.instagram || user?.twitter || user?.tiktok ? "flex" : "none"}>
         <Text color="textSecondary" fontSize="xs">
           Socials
         </Text>
         <HStack gap={4}>
-          <Link asChild>
-            <Icon size="md" color="textLight">
-              <TbBrandInstagramFilled />
-            </Icon>
-          </Link>
-          <Link asChild>
-            <Icon size="md" color="textLight">
-              <FaXTwitter />
-            </Icon>
-          </Link>
-          <Link asChild>
-            <Icon size="md" color="textLight">
-              <FaTiktok />
-            </Icon>
-          </Link>
+          {user?.instagram && (
+            <Link href={user.instagram} target="_blank">
+              <Icon size="md" color="textLight"><TbBrandInstagramFilled /></Icon>
+            </Link>
+          )}
+          {user?.twitter && (
+            <Link href={user.twitter} target="_blank">
+              <Icon size="md" color="textLight"><FaXTwitter /></Icon>
+            </Link>
+          )}
+          {user?.tiktok && (
+            <Link href={user.tiktok} target="_blank">
+              <Icon size="md" color="textLight"><FaTiktok /></Icon>
+            </Link>
+          )}
         </HStack>
       </VStack>
     </VStack>

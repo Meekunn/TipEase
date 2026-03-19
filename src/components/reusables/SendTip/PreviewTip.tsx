@@ -5,41 +5,66 @@ import {
   Text,
   VStack,
   Icon,
-  Tag,
   IconButton,
   Switch,
   Box,
 } from "@chakra-ui/react";
 import { RxCaretLeft } from "react-icons/rx";
-import { BnbIcon, CopyIcon } from "../icon";
+import { CopyIcon } from "../icon";
 import { IoInformationCircleOutline } from "react-icons/io5";
-import { VscCircleFilled } from "react-icons/vsc";
 import { RiEdit2Fill } from "react-icons/ri";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
 import { useState } from "react";
+import { useSendTip } from "@/hooks/useSendTip";
+import { useSendTipTransaction } from "@/hooks/useSendTransaction";
+import { TOKEN_CONTRACTS } from "@/lib/wagmi";
+import { coinIconMap } from "@/constants/currencies";
+import { useCoinPrices } from "@/hooks/useCoinPrices";
+import { useEstimateFeesPerGas } from "wagmi";
+import { sepolia } from "wagmi/chains";
 
 interface PreviewTipProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setIsSending: React.Dispatch<React.SetStateAction<boolean>>;
+  setTipSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
+const PreviewTip = ({ setStep, setIsSending, setTipSuccess }: PreviewTipProps) => {
 
+  const { sendTipForm } = useSendTip();
+  const { sendTip, isLoading } = useSendTipTransaction();
+  const { getUsdValue } = useCoinPrices();
+  const { data: feeData } = useEstimateFeesPerGas({
+    chainId: sepolia.id,
+  });
   const [isAgree, setIsAgree] = useState(false)
+  
+  const estimatedFeeEth = feeData
+    ? (Number(feeData.maxFeePerGas) * 21000 / 1e18).toFixed(6)
+    : '...';
 
-  const handleBackClick = () => {
-    setStep(1);
+  const handleBackClick = () => setStep(1);
+
+  const handleSendTip = async () => {
+    try {
+      setIsSending(true);
+      await sendTip({
+        coin: sendTipForm.coin,
+        amount: sendTipForm.amount,
+        recipientAddress: sendTipForm.recipientAddress as `0x${string}`,
+        note: sendTipForm.note,
+        anonymous: sendTipForm.anonymous,
+        tokenContract: TOKEN_CONTRACTS[sendTipForm.coin as keyof typeof TOKEN_CONTRACTS],
+      });
+      setTipSuccess(true);
+      setStep(3);
+    } catch (error) {
+      setTipSuccess(false);
+      console.error("Transaction failed:", error);
+    } finally {
+      setIsSending(false);
+    }
   };
-
-  const sendTip = () => {
-    setIsSending(true)
-    const timer = setTimeout(() => {
-      setIsSending(false)
-      setStep(3)
-    }, 3500)
-
-    return () => clearTimeout(timer)
-  }
 
   return (
     <VStack w="full" gap={4}>
@@ -63,9 +88,9 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
             lineHeight="100%"
             mt={1}
           >
-            0.3231 ETH
+            {sendTipForm.amount} {sendTipForm.coin.toUpperCase()}
           </Heading>
-          <Text color="textSecondary">≈ $350.06</Text>
+          <Text color="textSecondary"> ≈ ${getUsdValue(sendTipForm.coin, sendTipForm.amount)} USD</Text>
           <Button
             size="xs"
             variant="outline"
@@ -96,10 +121,12 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
             <Text color="textSecondary" fontSize="sm">
               You&apos;re Sending
             </Text>
-            <Text fontSize="sm">
-              <BnbIcon />
-              345.56 USDC
-            </Text>
+            <HStack gap={1}>
+              {coinIconMap[sendTipForm.coin] ?? null}
+              <Text fontSize="sm">
+                {sendTipForm.amount} {sendTipForm.coin.toUpperCase()}
+              </Text>
+            </HStack>
           </HStack>
           <HStack justify="space-between" w="full">
             <HStack gap={2}>
@@ -112,20 +139,19 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
             </HStack>
 
             <HStack gap={2}>
-              <Tag.Root variant="roundTag" colorPalette="green">
-                <Tag.StartElement>
-                  <VscCircleFilled />
-                </Tag.StartElement>
-                <Tag.Label>Max</Tag.Label>
-              </Tag.Root>
-              <Text fontSize="sm">0.04%</Text>
+              <Text fontSize="sm">
+              {estimatedFeeEth} ETH{' '}
+              <Text as="span" color="textSecondary">
+                ≈ ${getUsdValue('ethereum', estimatedFeeEth)} USD
+              </Text>
+            </Text>
             </HStack>
           </HStack>
           <HStack justify="space-between" w="full">
             <Text color="textSecondary" fontSize="sm">
               Estimated Time
             </Text>
-            <Text fontSize="sm">≈ 1 min</Text>
+            <Text fontSize="sm">≈ 15 secs</Text>
           </HStack>
           <HStack justify="space-between" w="full">
             <Text color="textSecondary" fontSize="sm">
@@ -133,7 +159,7 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
             </Text>
             <HStack gap={2}>
               <Text fontSize="sm">
-                {truncateWalletAddress("0x4aF934569203874072030Ed9e", 9, 7)}
+                {truncateWalletAddress(sendTipForm.recipientAddress, 9, 7)}
               </Text>
               <IconButton
                 aria-label="Copy Wallet Address"
@@ -143,9 +169,7 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
                 _hover={{
                   bgColor: "bgPrimary",
                 }}
-                onClick={() => {
-                  copyToClipboard("0x4aF934569203874072030Ed9e");
-                }}
+                onClick={() => copyToClipboard(sendTipForm.recipientAddress)}
               >
                 <CopyIcon />
               </IconButton>
@@ -167,11 +191,7 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
             </Text>
             <HStack gap={2} justify="space-between" w="full">
               <Text fontSize="sm">
-                {truncateWalletAddress(
-                  "0x4aF934569203874072030Ed9eEd9e03E53415D30xd8dA6BF26964aF9",
-                  17,
-                  15
-                )}
+                {truncateWalletAddress(sendTipForm.recipientAddress, 17, 15)}
               </Text>
               <IconButton
                 aria-label="Copy Wallet Address"
@@ -181,33 +201,34 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
                 _hover={{
                   bgColor: "bgPrimary",
                 }}
-                onClick={() => {
-                  copyToClipboard("0x4aF934569203874072030Ed9e");
-                }}
+                onClick={() => copyToClipboard(sendTipForm.recipientAddress)}
               >
                 <CopyIcon />
               </IconButton>
             </HStack>
           </VStack>
-          <VStack gap={4} w="full" align="start">
-            <Text color="textSecondary" fontSize="sm">
-              Note
-            </Text>
-            <HStack gap={2} justify="space-between" w="full">
-              <Text fontSize="sm">Birthday gift from John</Text>
-              <Button
-                size="xs"
-                variant="ghost"
-                color="blue.500"
-                _hover={{
-                  bgColor: "blue.100",
-                }}
-              >
-                <RiEdit2Fill />
-                Edit
-              </Button>
-            </HStack>
-          </VStack>
+          {sendTipForm.note && (
+            <VStack gap={4} w="full" align="start">
+              <Text color="textSecondary" fontSize="sm">
+                Note
+              </Text>
+              <HStack gap={2} justify="space-between" w="full">
+                <Text fontSize="sm">{sendTipForm.note}</Text>
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  color="blue.500"
+                  _hover={{
+                    bgColor: "blue.100",
+                  }}
+                  onClick={handleBackClick}
+                >
+                  <RiEdit2Fill />
+                  Edit
+                </Button>
+              </HStack>
+            </VStack>
+          )}
         </VStack>
       </VStack>
       <HStack justify="start" w="full" my={2}>
@@ -231,7 +252,7 @@ const PreviewTip = ({ setStep, setIsSending }: PreviewTipProps) => {
           </Switch.Label>
         </Switch.Root>
       </HStack>
-      <Button w="full" mt={16} variant="formBtn" onClick={sendTip} disabled={!isAgree}>
+      <Button w="full" mt={16} variant="formBtn" onClick={handleSendTip} loading={isLoading} loadingText="Sending..." disabled={!isAgree}>
         Send tip
       </Button>
     </VStack>

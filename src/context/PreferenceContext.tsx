@@ -10,22 +10,15 @@ export const PreferenceContext = createContext<PreferenceContextType | undefined
 const defaultPreference: IPreference = {
   defaultCurrency: "USD",
   minTipAmount: "0",
-  defaultThankYouMessage: null,
+  defaultThankYouMessage: "",
   autoAcceptTips: true,
 };
 
 export function PreferenceProvider({ children }: { children: ReactNode }) {
-  const [preference, setPreference] = useState<IPreference>(() => {
-    const stored = localStorage.getItem("tipease_preference");
-    return stored ? JSON.parse(stored) : defaultPreference;
-  });
+  const [preference, setPreference] = useState<IPreference>(defaultPreference);
 
   const updatePreference = (details: Partial<IPreference>) => {
-    setPreference((prev) => {
-      const updated = { ...prev, ...details };
-      localStorage.setItem("tipease_preference", JSON.stringify(updated));
-      return updated;
-    });
+    setPreference((prev) => ({ ...prev, ...details }));
   };
 
   return (

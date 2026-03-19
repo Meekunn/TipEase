@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const dirname =
   typeof __dirname !== "undefined"
@@ -13,7 +14,7 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react(), tsconfigPaths(), nodePolyfills()],
   resolve: {
     alias: {
       "@": "/src",

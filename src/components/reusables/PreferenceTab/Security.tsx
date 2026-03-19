@@ -17,7 +17,7 @@ const Security = () => {
         <Text fontSize="xs" color="textSecondary">Session Management</Text>
         <Text fontSize="xs">Manage your active sessions and sign out from other devices</Text>
       </VStack>
-      <Button variant="subtle" borderRadius="xl" size="sm" fontSize="xs">
+      <Button variant="subtle" borderRadius="xl" size="sm" fontSize="xs" disabled>
         Manage session
       </Button>
     </VStack>

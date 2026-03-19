@@ -2,9 +2,7 @@ import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { Container } from "@chakra-ui/react";
-import { WalletProvider } from "@/context/WalletContext";
-import { SendTipProvider } from "@/context/SendTipContext";
-import { PreferenceProvider } from "@/context/PreferenceContext";
+import { Toaster } from "@/components/ui/toaster";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,24 +10,19 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <WalletProvider>
-      <SendTipProvider>
-        <PreferenceProvider>
-          <Container
-            minH="100vh"
-            w="full"
-            display="flex"
-            flexDirection="column"
-          >
-            <Navbar />
-            <Container w="full" flex={1} pt="91px">
-              {children}
-            </Container>
-            <Footer />
-          </Container>
-        </PreferenceProvider>
-      </SendTipProvider>
-    </WalletProvider>
+    <Container
+      minH="100vh"
+      w="full"
+      display="flex"
+      flexDirection="column"
+    >
+      <Toaster />
+      <Navbar />
+      <Container w="full" flex={1} pt="91px">
+        {children}
+      </Container>
+      <Footer />
+    </Container>
   );
 };
 

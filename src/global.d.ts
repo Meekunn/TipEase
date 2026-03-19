@@ -9,6 +9,7 @@ interface WalletCardProps {
   label: string;
   description: string;
   extra?: ReactNode;
+  isDisabled?: boolean;
 }
 
 interface TokenValueCardProps {
@@ -25,22 +26,16 @@ interface StepProps {
 interface IUser {
   id: string;
   walletAddress: string;
-  tagName: string | null;
-  bio: string | null;
-  avatarUrl: string | null;
-  instagram: string | null;
-  twitter: string | null;
-  tiktok: string | null;
+  tagName: string;
+  bio: string;
+  avatarUrl: string;
+  instagram: string;
+  twitter: string;
+  tiktok: string;
   showWalletAddress: boolean;
   createdAt: string;
 }
-
-interface IWallet {
-  token: string;
-  user: IUser;
-}
-
-interface ISendTipForm {
+interface ISendTip {
   coin: string;
   amount: string;
   recipientAddress: string;
@@ -48,9 +43,36 @@ interface ISendTipForm {
   anonymous: boolean;
 }
 
+interface ITip {
+  id: string;
+  txHash: string;
+  coin: string;
+  amount: string;
+  senderAddress: string;
+  recipientAddress: string;
+  note: string;
+  anonymous: boolean;
+  status: "pending" | "confirmed" | "failed";
+}
+
 interface IPreference {
   defaultCurrency: string;
   minTipAmount: string;
-  defaultThankYouMessage: string | null;
+  defaultThankYouMessage: string;
   autoAcceptTips: boolean;
 }
+
+interface IEditProfileForm {
+  tagName: string;
+  avatarUrl: string | null;
+  instagram: string;
+  twitter: string;
+  tiktok: string;
+  bio: string;
+}
+
+type CoinGeckoPrices = {
+  ethereum: { usd: number };
+  tether: { usd: number };
+  "usd-coin": { usd: number };
+};

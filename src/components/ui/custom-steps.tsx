@@ -14,14 +14,14 @@ export interface CustomStepsProps {
 const CustomSteps = ({ steps, currentStep }: CustomStepsProps) => {
 
   return (
-     <Steps.Root step={currentStep} count={steps.length} orientation="vertical" height="400px">
+     <Steps.Root step={currentStep} count={steps.length} orientation="vertical" height="400px" gap={{base: 0, md: 8}} w="fit">
       <Steps.List>
         {steps.map((step, index) => (
           <Steps.Item key={index} index={index} >
             <Steps.Indicator>
               <Steps.Status incomplete={step.icon} complete={step.icon} />
             </Steps.Indicator>
-            <Steps.Title fontSize="sm" mt={2.5}>{step.title}</Steps.Title>
+            <Steps.Title fontSize="sm" mt={2.5} display={{base: "none", md: "inline-flex"}}>{step.title}</Steps.Title>
             <Steps.Separator
               top="2.5rem"
               w="4px"

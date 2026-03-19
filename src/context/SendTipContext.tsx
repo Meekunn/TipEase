@@ -1,15 +1,19 @@
 import { createContext, useState, type ReactNode } from "react";
 
 interface SendTipContextType {
-  sendTipForm: ISendTipForm;
-  updateSendTipForm: (details: Partial<ISendTipForm>) => void;
+  sendTipForm: ISendTip;
+  updateSendTipForm: (details: Partial<ISendTip>) => void;
   clearSendTipForm: () => void;
+  tip: ITip | null;
+  updateTip: (tips: ITip) => void;
+  tips: ITip[];
+  updateTips: (tips: ITip[]) => void;
 }
 
 export const SendTipContext = createContext<SendTipContextType | undefined>(undefined);
 
-const defaultForm: ISendTipForm = {
-  coin: "usdt",
+const defaultForm: ISendTip = {
+  coin: "ethereum",
   amount: "",
   recipientAddress: "",
   note: "",
@@ -17,26 +21,28 @@ const defaultForm: ISendTipForm = {
 };
 
 export function SendTipProvider({ children }: { children: ReactNode }) {
-  const [sendTipForm, setSendTipForm] = useState<ISendTipForm>(() => {
-    const stored = localStorage.getItem("tipease_send_tip_form");
-    return stored ? JSON.parse(stored) : defaultForm;
-  });
+  const [sendTipForm, setSendTipForm] = useState<ISendTip>(defaultForm);
+  const [tip, setTip] = useState<ITip | null>(null);
+  const [tips, setTips] = useState<ITip[]>([]);
 
-  const updateSendTipForm = (details: Partial<ISendTipForm>) => {
-    setSendTipForm((prev) => {
-      const updated = { ...prev, ...details };
-      localStorage.setItem("tipease_send_tip_form", JSON.stringify(updated));
-      return updated;
-    });
+  const updateSendTipForm = (details: Partial<ISendTip>) => {
+    setSendTipForm((prev) => ({ ...prev, ...details }));
   };
 
   const clearSendTipForm = () => {
     setSendTipForm(defaultForm);
-    localStorage.removeItem("tipease_send_tip_form");
+  };
+
+  const updateTip = (tips: ITip) => {
+    setTip(tips);
+  };
+
+  const updateTips = (tips: ITip[]) => {
+    setTips(tips);
   };
 
   return (
-    <SendTipContext.Provider value={{ sendTipForm, updateSendTipForm, clearSendTipForm }}>
+    <SendTipContext.Provider value={{ sendTipForm, updateSendTipForm, clearSendTipForm, tip, updateTip, tips, updateTips }}>
       {children}
     </SendTipContext.Provider>
   );

@@ -24,12 +24,12 @@ import "./navbar.css";
 
 const Navbar = () => {
   
-  const {wallet} = useWallet()
+  const {wallet, isConnected} = useWallet()
 
   const [open, setOpen] = useState(false)
   const [isNotification] = useState(false);
 
-  const isWalletConnected = !!wallet?.token;
+  const isWalletConnected = isConnected;
 
   return (
     <HStack

@@ -1,11 +1,11 @@
 import { HStack, Text, VStack, Avatar } from "@chakra-ui/react";
 
 interface IWalletCard {
-  connectWallet: (platform: string) => void;
-  card: WalletCardProps
+  connectWallet: () => void;
+  card: WalletCardProps;
 }
 
-const WalletCard = ({ card, connectWallet }: IWalletCard) => {
+const WalletCard = ({ card: {isDisabled = true, ...card}, connectWallet }: IWalletCard) => {
   return (
     <HStack
       w="full"
@@ -20,7 +20,9 @@ const WalletCard = ({ card, connectWallet }: IWalletCard) => {
       _hover={{
         bg: "bgPrimary",
       }}
-      onClick={() => connectWallet(card.label.toLowerCase())}
+      onClick={() => connectWallet()}
+      cursor={isDisabled ? "not-allowed": "pointer"}
+      opacity={isDisabled ? 0.5 : 1}
     >
       <HStack gap={2} align="center">
         <AvatarCard image={card.icon} name={card.label} />
