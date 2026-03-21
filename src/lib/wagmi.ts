@@ -10,7 +10,6 @@ export const wagmiConfig = createConfig({
   },
 });
 
-// Sepolia testnet token contract addresses
 export const TOKEN_CONTRACTS = {
   usdc: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
   usdt: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0",
