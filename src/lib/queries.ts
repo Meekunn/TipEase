@@ -4,7 +4,6 @@ import { useWallet } from "@/hooks/useWallet";
 import { endpoints } from "./endpoints";
 import { usePreference } from "@/hooks/usePreference";
 import { useTip } from "@/hooks/useTip";
-// import { COINGECKO_IDS } from "@/constants/currencies";
 
 // User
 export const useGetUser = () => {
@@ -96,8 +95,7 @@ export const useTokenPricesQuery = () => {
   return useQuery({
     queryKey: ["tokenPrices"],
     queryFn: async (): Promise<CoinGeckoPrices> => {
-      // const ids = Object.values(COINGECKO_IDS).join(",");
-      const res = await api.getExternal(endpoints.PRICES);
+      const res = await api.get(endpoints.PRICES);
       return res;
     },
     staleTime: 1000 * 60 * 2,
