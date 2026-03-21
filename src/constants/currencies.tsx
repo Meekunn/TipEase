@@ -7,8 +7,6 @@ export const cryptoCurrencyOptions = createListCollection({
     { label: "ETH", value: "ethereum", icon: <EthereumIcon /> },
     { label: "USDC", value: "usdc", icon: <UsdcIcon /> },
     { label: "USDT", value: "usdt", icon: <UsdtIcon /> },
-    { label: "BTC", value: "bitcoin", icon: <BitcoinIcon /> },
-    { label: "TRX", value: "tron", icon: <TronIcon /> },
   ],
 });
 
@@ -25,4 +23,12 @@ export const coinIconMap: Record<string, JSX.Element> = {
   usdc: <UsdcIcon size={"md"} />,
   bitcoin: <BitcoinIcon size={"md"} />,
   tron: <TronIcon size={"md"} />,
+};
+
+export const COINGECKO_IDS: Record<string, string> = {
+  ethereum: "ethereum",
+  usdc: "usd-coin",
+  usdt: "tether",
+  bitcoin: "bitcoin",
+  tron: "tron",
 };

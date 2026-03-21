@@ -3,15 +3,15 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ChakraProvider } from '@chakra-ui/react';
 import system from '@/theme';
-import { SendTipProvider } from '@/context/SendTipContext';
+import { TipProvider } from '@/context/TipContext';
 import TransactionSummary from '../TransactionSummary';
 
 const renderTransactionSummary = (props: { setStep: React.Dispatch<React.SetStateAction<number>> }) => {
   return render(
     <ChakraProvider value={system}>
-      <SendTipProvider>
-        <TransactionSummary {...props} />
-      </SendTipProvider>
+      <TipProvider>
+        <TransactionSummary isSuccess {...props} />
+      </TipProvider>
     </ChakraProvider>
   );
 };

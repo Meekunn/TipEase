@@ -20,9 +20,18 @@ const ERC20_ABI = [
 ] as const;
 
 export const useSendTipTransaction = () => {
-  const { mutateAsync: sendTransactionAsync, isPending: isSending } =
-    useWagmiSendTx();
-  const { mutateAsync: createTip, isPending: isSaving } = useCreateTip();
+  const {
+    mutateAsync: sendTransactionAsync,
+    isPending: isSending,
+    isSuccess: isTxSuccess,
+    isError: isTxError,
+  } = useWagmiSendTx();
+  const {
+    mutateAsync: createTip,
+    isPending: isSaving,
+    isSuccess: isTipSuccess,
+    isError: isTipError,
+  } = useCreateTip();
 
   const sendTip = async ({
     coin,
@@ -75,5 +84,9 @@ export const useSendTipTransaction = () => {
   return {
     sendTip,
     isLoading: isSending || isSaving,
+    isTxSuccess,
+    isTipSuccess,
+    isTxError,
+    isTipError,
   };
 };

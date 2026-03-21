@@ -4,7 +4,7 @@ import { Provider } from "./components/ui/provider.tsx";
 import { RouterProvider } from "react-router";
 import router from "./router/index.tsx";
 import { WalletProvider } from "./context/WalletContext.tsx";
-import { SendTipProvider } from "./context/SendTipContext.tsx";
+import { TipProvider } from "./context/TipContext.tsx";
 import { PreferenceProvider } from "./context/PreferenceContext.tsx";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "./lib/wagmi.ts";
@@ -19,11 +19,11 @@ createRoot(document.getElementById("root")!).render(
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <WalletProvider>
-            <SendTipProvider>
+            <TipProvider>
               <PreferenceProvider>
                 <RouterProvider router={router} />
               </PreferenceProvider>
-            </SendTipProvider>
+            </TipProvider>
           </WalletProvider>
         </QueryClientProvider>
       </WagmiProvider>

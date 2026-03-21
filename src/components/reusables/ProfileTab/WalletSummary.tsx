@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 import {
   Button,
+  Dialog,
   Field,
   HStack,
   IconButton,
   Input,
   InputGroup,
+  SkeletonText,
   Switch,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { TbEdit } from "react-icons/tb";
-import { CopyIcon } from "../icon";
+import { CopyIcon, EmptyWalletIcon } from "../icon";
 import { copyToClipboard } from "@/utils/formatText";
 import { useWallet } from "@/hooks/useWallet";
 import { useGetUser } from "@/lib/queries";
 import { useUpdateUser } from "@/lib/mutations";
+import ConnectWalletDialog from "../ConnectWalletDialog";
 
 const WalletSummary = () => {
 
   const {data: user, isLoading} = useGetUser();
   const { mutate: updateUser, isPending } = useUpdateUser();
-  const { wallet } = useWallet();
+  const { wallet, isConnected } = useWallet();
 
   const [isEditingTag, setIsEditingTag] = useState(false);
   const [tagName, setTagName] = useState("");
@@ -42,7 +45,47 @@ const WalletSummary = () => {
     );
   };
 
-  if (isLoading) return null;
+  if (!isConnected) {
+    return(
+    <VStack
+      bg="white"
+      border="0.6px solid"
+      borderColor="bgPrimary"
+      p={6}
+      gap={5}
+      borderRadius="xl"
+      w="full"
+      align="center"
+    >
+      <Text fontSize="sm" textAlign="center">You need to connect your wallet to view your wallet summary</Text>
+      <ConnectWalletDialog>
+        <Dialog.Trigger asChild>
+          <Button borderRadius="lg">
+            Connect Wallet <EmptyWalletIcon />
+          </Button>
+        </Dialog.Trigger>
+      </ConnectWalletDialog>
+    </VStack>
+    )
+  }
+
+  if (isLoading) {
+    return (
+    <VStack
+      bg="white"
+      border="0.6px solid"
+      borderColor="bgPrimary"
+      p={4}
+      gap={6}
+      borderRadius="xl"
+      w="full"
+      align="start"
+    >
+      <Text fontSize="sm">Wallet Summary</Text>
+      <SkeletonText noOfLines={5} w="full" gap={2} />
+    </VStack>
+    )
+  };
 
   return (
     <VStack
@@ -55,7 +98,7 @@ const WalletSummary = () => {
       w="full"
       align="start"
     >
-      <Text fontSize="sm">Wallet</Text>
+      <Text fontSize="sm">Wallet Summary</Text>
       <VStack gap={4} align="start">
         <Field.Root>
           <Field.Label color="textSecondary" fontSize="xs">

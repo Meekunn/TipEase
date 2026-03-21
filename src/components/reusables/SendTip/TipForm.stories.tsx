@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import TipForm from './TipForm';
 import { WalletProvider } from '@/context/WalletContext';
-import { SendTipProvider } from '@/context/SendTipContext';
+import { TipProvider } from '@/context/TipContext';
 
 const withProviders = (Story: React.ComponentType) => (
   <WalletProvider>
-    <SendTipProvider>
+    <TipProvider>
       <div style={{ maxWidth: '480px', padding: '24px' }}>
         <Story />
       </div>
-    </SendTipProvider>
+    </TipProvider>
   </WalletProvider>
 );
 

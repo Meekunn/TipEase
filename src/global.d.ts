@@ -72,7 +72,8 @@ interface IEditProfileForm {
 }
 
 type CoinGeckoPrices = {
-  ethereum: { usd: number };
-  tether: { usd: number };
-  "usd-coin": { usd: number };
+  [key: string]: { usd: number };
+  // ethereum: { usd: number };
+  // tether: { usd: number };
+  // "usd-coin": { usd: number };
 };

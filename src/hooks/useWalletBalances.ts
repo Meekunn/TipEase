@@ -2,32 +2,7 @@ import { useBalance, useConnection, useReadContract } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { formatUnits } from "viem";
 import { TOKEN_CONTRACTS } from "@/lib/wagmi";
-import { useTokenPricesQuery } from "@/lib/queries";
-
-const COINGECKO_IDS = {
-  ETH: "ethereum",
-  USDT: "tether",
-  SOL: "solana",
-  BNB: "binancecoin",
-  BTC: "bitcoin",
-} as const;
-
-type TokenSymbol = keyof typeof COINGECKO_IDS;
-
-export type TokenBalance = {
-  symbol: TokenSymbol;
-  balance: number; // human-readable (e.g. 0.05)
-  usdPrice: number; // price of 1 token in USD
-  usdValue: number; // balance * usdPrice
-};
-
-export type WalletBalances = {
-  tokens: TokenBalance[];
-  totalUsd: number;
-  isLoading: boolean;
-  error: string | null;
-};
-
+import { useCoinPrices } from "./useCoinPrices";
 
 const ERC20_ABI = [
   {
@@ -41,7 +16,7 @@ const ERC20_ABI = [
 
 export const useWalletBalances = () => {
   const { address, isConnected } = useConnection();
-  const { data: prices, isLoading: pricesLoading } = useTokenPricesQuery();
+  const { getPrice, getUsdValue, pricesLoading } = useCoinPrices();
 
   // native ETH balance
   const { data: ethBalance, isLoading: ethLoading } = useBalance({
@@ -69,7 +44,42 @@ export const useWalletBalances = () => {
     query: { enabled: isConnected && !!address },
   });
 
+  const ethAmount = ethBalance
+    ? parseFloat(formatUnits(ethBalance.value, ethBalance.decimals))
+    : 0;
+  const usdtAmount = usdtRaw
+    ? parseFloat(formatUnits(usdtRaw as bigint, 6))
+    : 0;
+  const usdcAmount = usdcRaw
+    ? parseFloat(formatUnits(usdcRaw as bigint, 6))
+    : 0;
+
+  const tokens = [
+    {
+      symbol: "ETH",
+      balance: ethAmount,
+      usdPrice: getPrice("ethereum"),
+      usdValue: getUsdValue("ethereum", ethAmount.toString()),
+    },
+    {
+      symbol: "USDT",
+      balance: usdtAmount,
+      usdPrice: getPrice("usdt"),
+      usdValue: getUsdValue("usdt", usdtAmount.toString()),
+    },
+    {
+      symbol: "USDC",
+      balance: usdcAmount,
+      usdPrice: getPrice("usdc"),
+      usdValue: getUsdValue("usdc", usdcAmount.toString()),
+    },
+  ];
+
+  const totalUsd = tokens.reduce((sum, t) => sum + parseFloat(t.usdValue), 0);
+
   return {
+    tokens,
+    totalUsd,
     balances: {
       ethereum: {
         formatted: ethBalance
@@ -89,6 +99,6 @@ export const useWalletBalances = () => {
         value: usdcRaw ?? BigInt(0),
       },
     },
-    isLoading: ethLoading || usdtLoading || usdcLoading,
+    isLoading: ethLoading || usdtLoading || usdcLoading || pricesLoading,
   };
 };

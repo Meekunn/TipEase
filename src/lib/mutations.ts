@@ -3,7 +3,7 @@ import { api } from "./api";
 import { endpoints } from "./endpoints";
 import { useWallet } from "@/hooks/useWallet";
 import { usePreference } from "@/hooks/usePreference";
-import { useSendTip } from "@/hooks/useSendTip";
+import { useTip } from "@/hooks/useTip";
 
 // User
 export const useUpdateUser = () => {
@@ -38,12 +38,12 @@ export const useUpdateUser = () => {
 // Preferences
 export const useUpdatePreferences = () => {
   const queryClient = useQueryClient();
-  const { updatePreference } = usePreference();
+  const { updatePreferenceContext } = usePreference();
   return useMutation({
     mutationFn: (data: Partial<IPreference>) =>
       api.put(endpoints.PREFERENCES, data),
     onSuccess: ({ preference }) => {
-      updatePreference(preference);
+      updatePreferenceContext(preference);
       queryClient.invalidateQueries({ queryKey: ["preferences"] });
     },
   });
@@ -52,7 +52,7 @@ export const useUpdatePreferences = () => {
 // Tips
 export const useCreateTip = () => {
   const queryClient = useQueryClient();
-  const { updateTip } = useSendTip();
+  const { updateTip } = useTip();
   return useMutation({
     mutationFn: (data: ISendTip & { txHash: string }) =>
       api.post(endpoints.POST_TIPS, data),

@@ -1,4 +1,4 @@
-import { HStack, Link, Text, VStack, Icon, IconButton } from "@chakra-ui/react";
+import { HStack, Link, Text, VStack, Icon, IconButton, SkeletonText } from "@chakra-ui/react";
 import { useState } from "react";
 import { VscLink } from "react-icons/vsc";
 import { TbBrandInstagramFilled } from "react-icons/tb";
@@ -16,12 +16,30 @@ const About = () => {
 
   const bio = user?.bio ?? "Edit your profile to add a bio"
   const profileLink = user?.tagName ? `tipease.com/${user.tagName}` : '';
+  const hasSocials = !!(user?.instagram || user?.twitter || user?.tiktok);
 
   const isLong = bio.length > CHAR_LIMIT;
   const displayText =
     !expanded && isLong ? bio.slice(0, CHAR_LIMIT) + " ..." : bio;
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <VStack
+        bg="white"
+        border="0.6px solid"
+        borderColor="bgPrimary"
+        p={4}
+        gap={6}
+        borderRadius="xl"
+        w="full"
+        align="start"
+      >
+        <SkeletonText noOfLines={3} w="full" />
+        <SkeletonText noOfLines={1} w="48" />
+        <SkeletonText noOfLines={1} w="32" />
+      </VStack>
+    );
+  }
 
   return (
     <VStack
@@ -51,7 +69,7 @@ const About = () => {
           </Link>
         )}
       </VStack>
-      <VStack gap={1} align="start" mt={2}>
+      <VStack gap={1} align="start" mt={2} w="full">
         <Text color="textSecondary" fontSize="xs">
           Profile Link
         </Text>
@@ -79,28 +97,28 @@ const About = () => {
           </IconButton>
         </HStack>
       </VStack>
-      <VStack gap={2} align="start" fontSize="sm" display={user?.instagram || user?.twitter || user?.tiktok ? "flex" : "none"}>
-        <Text color="textSecondary" fontSize="xs">
-          Socials
-        </Text>
-        <HStack gap={4}>
-          {user?.instagram && (
-            <Link href={user.instagram} target="_blank">
-              <Icon size="md" color="textLight"><TbBrandInstagramFilled /></Icon>
-            </Link>
-          )}
-          {user?.twitter && (
-            <Link href={user.twitter} target="_blank">
-              <Icon size="md" color="textLight"><FaXTwitter /></Icon>
-            </Link>
-          )}
-          {user?.tiktok && (
-            <Link href={user.tiktok} target="_blank">
-              <Icon size="md" color="textLight"><FaTiktok /></Icon>
-            </Link>
-          )}
-        </HStack>
-      </VStack>
+      {hasSocials && (
+        <VStack gap={2} align="start" fontSize="sm" w="full">
+          <Text color="textSecondary" fontSize="xs">Socials</Text>
+          <HStack gap={4}>
+            {user?.instagram && (
+              <Link href={user.instagram} target="_blank">
+                <Icon size="md" color="textLight"><TbBrandInstagramFilled /></Icon>
+              </Link>
+            )}
+            {user?.twitter && (
+              <Link href={user.twitter} target="_blank">
+                <Icon size="md" color="textLight"><FaXTwitter /></Icon>
+              </Link>
+            )}
+            {user?.tiktok && (
+              <Link href={user.tiktok} target="_blank">
+                <Icon size="md" color="textLight"><FaTiktok /></Icon>
+              </Link>
+            )}
+          </HStack>
+        </VStack>
+      )}
     </VStack>
   );
 };

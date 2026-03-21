@@ -1,16 +1,18 @@
 import { createContext, useState, type ReactNode } from "react";
 
-interface SendTipContextType {
+interface TipContextType {
   sendTipForm: ISendTip;
   updateSendTipForm: (details: Partial<ISendTip>) => void;
   clearSendTipForm: () => void;
   tip: ITip | null;
   updateTip: (tips: ITip) => void;
-  tips: ITip[];
-  updateTips: (tips: ITip[]) => void;
+  sentTips: ITip[];
+  updateSentTips: (tips: ITip[]) => void;
+  receivedTips: ITip[];
+  updateReceivedTips: (tips: ITip[]) => void;
 }
 
-export const SendTipContext = createContext<SendTipContextType | undefined>(undefined);
+export const TipContext = createContext<TipContextType | undefined>(undefined);
 
 const defaultForm: ISendTip = {
   coin: "ethereum",
@@ -20,10 +22,11 @@ const defaultForm: ISendTip = {
   anonymous: false,
 };
 
-export function SendTipProvider({ children }: { children: ReactNode }) {
+export function TipProvider({ children }: { children: ReactNode }) {
   const [sendTipForm, setSendTipForm] = useState<ISendTip>(defaultForm);
   const [tip, setTip] = useState<ITip | null>(null);
-  const [tips, setTips] = useState<ITip[]>([]);
+  const [sentTips, setSentTips] = useState<ITip[]>([]);
+  const [receivedTips, setReceivedTips] = useState<ITip[]>([]);
 
   const updateSendTipForm = (details: Partial<ISendTip>) => {
     setSendTipForm((prev) => ({ ...prev, ...details }));
@@ -37,13 +40,17 @@ export function SendTipProvider({ children }: { children: ReactNode }) {
     setTip(tips);
   };
 
-  const updateTips = (tips: ITip[]) => {
-    setTips(tips);
+  const updateSentTips = (tips: ITip[]) => {
+    setSentTips(tips);
+  };
+
+  const updateReceivedTips = (tips: ITip[]) => {
+    setReceivedTips(tips);
   };
 
   return (
-    <SendTipContext.Provider value={{ sendTipForm, updateSendTipForm, clearSendTipForm, tip, updateTip, tips, updateTips }}>
+    <TipContext.Provider value={{ sendTipForm, updateSendTipForm, clearSendTipForm, tip, updateTip, sentTips, updateSentTips, receivedTips, updateReceivedTips }}>
       {children}
-    </SendTipContext.Provider>
+    </TipContext.Provider>
   );
 }

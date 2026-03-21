@@ -17,7 +17,7 @@ import {
 import { VscCircleFilled } from "react-icons/vsc";
 import { pasteFromClipboard } from "@/utils/formatText";
 import { useWallet } from "@/hooks/useWallet";
-import { useSendTip } from "@/hooks/useSendTip";
+import { useTip } from "@/hooks/useTip";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { usePreference } from "@/hooks/usePreference";
 import { cryptoCurrencyOptions } from "@/constants/currencies";
@@ -29,18 +29,18 @@ interface TipFormProps {
   children?: React.ReactNode;
   border?: boolean;
   btnText: string;
-  setStep?: React.Dispatch<React.SetStateAction<number>>
   margintop?: number;
   btnPaddingY?: number;
   btnFontSize?: string;
+  onBtnClick: () => void;
 }
 
-const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY = 4, btnFontSize = "md" }: TipFormProps): JSX.Element => {
+const TipForm = ({ border = true, btnText, margintop = 16, btnPaddingY = 4, btnFontSize = "md", onBtnClick }: TipFormProps): JSX.Element => {
 
   const { preference } = usePreference();
-  const {isConnected} = useWallet();
-  const {updateSendTipForm, sendTipForm} = useSendTip();
-  const {balances} = useWalletBalances();
+  const { isConnected } = useWallet();
+  const { updateSendTipForm, sendTipForm } = useTip();
+  const { balances } = useWalletBalances();
   const { getPrice } = useCoinPrices();
 
   const amountInputRef = useRef<HTMLInputElement>(null);
@@ -60,9 +60,7 @@ const TipForm = ({ border = true, btnText, setStep, margintop = 16, btnPaddingY 
 
   const onSubmit = (data: ISendTip) => {
     updateSendTipForm(data);
-    if(setStep) {
-      setStep(2)
-    }
+    onBtnClick();
   };
 
   const pasteTag = async () => {

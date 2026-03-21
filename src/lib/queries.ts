@@ -3,7 +3,8 @@ import { api } from "./api";
 import { useWallet } from "@/hooks/useWallet";
 import { endpoints } from "./endpoints";
 import { usePreference } from "@/hooks/usePreference";
-import { useSendTip } from "@/hooks/useSendTip";
+import { useTip } from "@/hooks/useTip";
+import { COINGECKO_IDS } from "@/constants/currencies";
 
 // User
 export const useGetUser = () => {
@@ -34,12 +35,12 @@ export const useGetUserByAddress = (address: string) => {
 // Preferences
 export const useGetPreferences = () => {
   const { isConnected } = useWallet();
-  const { updatePreference } = usePreference();
+  const { updatePreferenceContext } = usePreference();
   return useQuery({
     queryKey: ["preferences"],
     queryFn: async () => {
       const { preference } = await api.get(endpoints.PREFERENCES);
-      updatePreference(preference);
+      updatePreferenceContext(preference);
       return preference as IPreference;
     },
     enabled: isConnected,
@@ -50,15 +51,43 @@ export const useGetPreferences = () => {
 // Tips
 export const useGetSentTips = () => {
   const { isConnected } = useWallet();
-  const { updateTips } = useSendTip();
+  const { updateSentTips } = useTip();
   return useQuery({
     queryKey: ["tips", "sent"],
     queryFn: async () => {
       const { tips } = await api.get(endpoints.GET_TIPS_SENT);
-      updateTips(tips);
+      updateSentTips(tips);
       return tips as ITip[];
     },
     enabled: isConnected,
+  });
+};
+
+export const useGetReceivedTips = () => {
+  const { isConnected } = useWallet();
+  const { updateReceivedTips } = useTip();
+  return useQuery({
+    queryKey: ["tips", "received"],
+    queryFn: async () => {
+      const { tips } = await api.get(endpoints.GET_TIPS_RECEIVED);
+      updateReceivedTips(tips);
+      return tips as ITip[];
+    },
+    enabled: isConnected,
+  });
+};
+
+export const useGetTipById = (id: string) => {
+  const { isConnected } = useWallet();
+  const { updateTip } = useTip();
+  return useQuery({
+    queryKey: ["tips", id],
+    queryFn: async () => {
+      const { tip } = await api.get(endpoints.GET_TIPS_BY_ID(id));
+      updateTip(tip);
+      return tip as ITip;
+    },
+    enabled: !!id && isConnected,
   });
 };
 
@@ -67,37 +96,14 @@ export const useTokenPricesQuery = () => {
   return useQuery({
     queryKey: ["tokenPrices"],
     queryFn: async (): Promise<CoinGeckoPrices> => {
-      const ids = "ethereum,tether,usd-coin";
-      const res = await api.get(endpoints.COIN_GECKO_ID(ids));
-      return res.data;
+      const ids = Object.values(COINGECKO_IDS).join(",");
+      const res = await api.getExternal(endpoints.COIN_GECKO_ID(ids));
+      return res;
     },
-    refetchInterval: 60_000,
-    staleTime: 60_000,
+    staleTime: 1000 * 60 * 2,
+    refetchInterval: 1000 * 60 * 2,
   });
 };
-
-// export const useGetReceivedTips = () => {
-//   const { isConnected } = useWallet();
-//   return useQuery({
-//     queryKey: ["tips", "received"],
-//     queryFn: async () => {
-//       const { tips } = await api.get(endpoints.GET_TIPS_RECEIVED);
-//       return tips as ITip[];
-//     },
-//     enabled: isConnected,
-//   });
-// };
-
-// export const useGetTipById = (id: string) => {
-//   return useQuery({
-//     queryKey: ["tips", id],
-//     queryFn: async () => {
-//       const { tip } = await api.get(endpoints.GET_TIPS_BY_ID(id));
-//       return tip as ITip;
-//     },
-//     enabled: !!id,
-//   });
-// };
 
 // // Withdrawals
 // export const useGetWithdrawalHistory = () => {

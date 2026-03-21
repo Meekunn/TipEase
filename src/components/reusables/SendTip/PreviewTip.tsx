@@ -15,7 +15,7 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 import { RiEdit2Fill } from "react-icons/ri";
 import { copyToClipboard, truncateWalletAddress } from "@/utils/formatText";
 import { useState } from "react";
-import { useSendTip } from "@/hooks/useSendTip";
+import { useTip } from "@/hooks/useTip";
 import { useSendTipTransaction } from "@/hooks/useSendTransaction";
 import { TOKEN_CONTRACTS } from "@/lib/wagmi";
 import { coinIconMap } from "@/constants/currencies";
@@ -25,13 +25,11 @@ import { sepolia } from "wagmi/chains";
 
 interface PreviewTipProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setIsSending: React.Dispatch<React.SetStateAction<boolean>>;
-  setTipSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PreviewTip = ({ setStep, setIsSending, setTipSuccess }: PreviewTipProps) => {
+const PreviewTip = ({ setStep }: PreviewTipProps) => {
 
-  const { sendTipForm } = useSendTip();
+  const { sendTipForm } = useTip();
   const { sendTip, isLoading } = useSendTipTransaction();
   const { getUsdValue } = useCoinPrices();
   const { data: feeData } = useEstimateFeesPerGas({
@@ -47,7 +45,6 @@ const PreviewTip = ({ setStep, setIsSending, setTipSuccess }: PreviewTipProps) =
 
   const handleSendTip = async () => {
     try {
-      setIsSending(true);
       await sendTip({
         coin: sendTipForm.coin,
         amount: sendTipForm.amount,
@@ -56,14 +53,10 @@ const PreviewTip = ({ setStep, setIsSending, setTipSuccess }: PreviewTipProps) =
         anonymous: sendTipForm.anonymous,
         tokenContract: TOKEN_CONTRACTS[sendTipForm.coin as keyof typeof TOKEN_CONTRACTS],
       });
-      setTipSuccess(true);
       setStep(3);
     } catch (error) {
-      setTipSuccess(false);
       console.error("Transaction failed:", error);
-    } finally {
-      setIsSending(false);
-    }
+    } 
   };
 
   return (

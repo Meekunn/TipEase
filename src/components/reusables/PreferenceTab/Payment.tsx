@@ -1,14 +1,14 @@
-import { usePreference } from "@/hooks/usePreference";
+// import { usePreference } from "@/hooks/usePreference";
 import { useUpdatePreferences } from "@/lib/mutations";
 import { Field, NumberInput, Select, Text, Textarea, VStack, InputGroup, Switch, Button } from "@chakra-ui/react"
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import {currencyOptions} from "@/constants/currencies";
+import { useGetPreferences } from "@/lib/queries";
 
 const Payment = () => {
-
-  const { preference } = usePreference();
+  const {data: preference} = useGetPreferences()
   const { mutate: updatePreference, isPending } = useUpdatePreferences();
 
   const {register, handleSubmit, formState: {errors}, reset, control} = useForm<IPreference>({
@@ -29,7 +29,6 @@ const Payment = () => {
         defaultThankYouMessage: data.defaultThankYouMessage,
         autoAcceptTips: data.autoAcceptTips,
       },
-      // { onSuccess: () => setOpen(false) }
     );
   }  
 

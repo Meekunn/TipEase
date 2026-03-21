@@ -2,7 +2,7 @@ import { createContext, useState, type ReactNode } from "react";
 
 interface PreferenceContextType {
   preference: IPreference;
-  updatePreference: (details: Partial<IPreference>) => void;
+  updatePreferenceContext: (details: Partial<IPreference>) => void;
 }
 
 export const PreferenceContext = createContext<PreferenceContextType | undefined>(undefined);
@@ -17,12 +17,12 @@ const defaultPreference: IPreference = {
 export function PreferenceProvider({ children }: { children: ReactNode }) {
   const [preference, setPreference] = useState<IPreference>(defaultPreference);
 
-  const updatePreference = (details: Partial<IPreference>) => {
+  const updatePreferenceContext = (details: Partial<IPreference>) => {
     setPreference((prev) => ({ ...prev, ...details }));
   };
 
   return (
-    <PreferenceContext.Provider value={{ preference, updatePreference }}>
+    <PreferenceContext.Provider value={{ preference, updatePreferenceContext }}>
       {children}
     </PreferenceContext.Provider>
   );

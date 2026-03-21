@@ -2,7 +2,7 @@ import { Box, Button, Heading, HStack, Icon, Text, VStack } from "@chakra-ui/rea
 import { PiSealCheckFill } from "react-icons/pi";
 import { FaTimesCircle } from "react-icons/fa";
 import { BnbIcon, SendIcon, UsdtIcon } from "../icon";
-import { useSendTip } from "@/hooks/useSendTip";
+import { useTip } from "@/hooks/useTip";
 import { useGetSentTips } from "@/lib/queries";
 import { useCoinPrices } from "@/hooks/useCoinPrices";
 
@@ -13,7 +13,7 @@ interface ITransactionSummary {
 
 const TransactionSummary = ({setStep, isSuccess}: ITransactionSummary) => {
 
-  const { clearSendTipForm, sendTipForm } = useSendTip();
+  const { clearSendTipForm, sendTipForm } = useTip();
   const { data: sentTips } = useGetSentTips();
   const { getUsdValue } = useCoinPrices();
 
@@ -101,7 +101,6 @@ const TransactionSummary = ({setStep, isSuccess}: ITransactionSummary) => {
             </VStack>
           </VStack>
         </VStack>
-
       </VStack>
       <VStack w="full" mt={16} gap={2}>
         <Button w="full" variant="formBtn" onClick={backToHome}>

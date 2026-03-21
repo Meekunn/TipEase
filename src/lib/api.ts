@@ -14,6 +14,16 @@ export const api = {
     return res.json();
   },
 
+  getExternal: async (path: string) => {
+    const res = await fetch(`${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
   post: async (path: string, body: unknown) => {
     const res = await fetch(`${BASE_URL}${path}`, {
       method: "POST",

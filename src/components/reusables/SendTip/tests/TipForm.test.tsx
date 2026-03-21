@@ -4,16 +4,16 @@ import userEvent from '@testing-library/user-event';
 import { ChakraProvider } from '@chakra-ui/react';
 import system from '@/theme';
 import { WalletProvider } from '@/context/WalletContext';
-import { SendTipProvider } from '@/context/SendTipContext';
+import { TipProvider } from '@/context/TipContext';
 import TipForm from '../TipForm';
 
 const renderTipForm = (props: Partial<React.ComponentProps<typeof TipForm>> = {}) => {
   return render(
     <ChakraProvider value={system}>
       <WalletProvider>
-        <SendTipProvider>
-          <TipForm btnText="Preview tip" {...props} />
-        </SendTipProvider>
+        <TipProvider>
+          <TipForm btnText="Preview tip" {...props} onBtnClick={() => {}} />
+        </TipProvider>
       </WalletProvider>
     </ChakraProvider>
   );
@@ -88,7 +88,7 @@ describe('TipForm', () => {
   it('calls setStep when form is submitted successfully', async () => {
     const user = userEvent.setup();
     const setStep = vi.fn();
-    renderTipForm({ setStep });
+    renderTipForm({ onBtnClick: setStep });
 
     await user.type(screen.getByPlaceholderText('Add recipient address'), '0x4aF934569203874072030Ed9e');
 
