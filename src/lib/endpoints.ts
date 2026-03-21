@@ -17,6 +17,5 @@ export const endpoints = {
   GET_WITHDRAWALS_HISTORY: "/withdrawals/history",
   GET_WITHDRAWALS_BY_ID: (id: string) => `/withdrawals/${id}`,
 
-  COIN_GECKO_ID: (id: string) =>
-    `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
+  PRICES: "/prices",
 };
