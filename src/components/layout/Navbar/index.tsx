@@ -4,7 +4,6 @@ import {
   HStack,
   IconButton,
   Image,
-  Dialog,
   Float,
   Circle,
   Box,
@@ -127,11 +126,9 @@ const Navbar = () => {
             <WalletConnected isMobileNav wallet={wallet} />
           ): ( 
             <ConnectWalletDialog>
-              <Dialog.Trigger asChild>
-                <IconButton aria-label="Connect Wallet" borderRadius="lg">
-                  <EmptyWalletIcon />
-                </IconButton>
-              </Dialog.Trigger>
+              <IconButton aria-label="Connect Wallet" borderRadius="lg">
+                <EmptyWalletIcon />
+              </IconButton>
             </ConnectWalletDialog>
           )}
         </Stack>
@@ -140,11 +137,9 @@ const Navbar = () => {
             <WalletConnected wallet={wallet} />
           ) : (
             <ConnectWalletDialog>
-              <Dialog.Trigger asChild>
-                <Button borderRadius="lg">
-                  Connect <EmptyWalletIcon />
-                </Button>
-              </Dialog.Trigger>
+              <Button borderRadius="lg">
+                Connect <EmptyWalletIcon />
+              </Button>
             </ConnectWalletDialog>
           )}
         </Stack>

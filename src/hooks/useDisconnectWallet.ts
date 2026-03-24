@@ -1,18 +1,12 @@
-import { useDisconnect } from "wagmi";
+import { useDisconnect } from "@reown/appkit/react";
 import { useWallet } from "./useWallet";
 
 export const useDisconnectWallet = () => {
-  const {
-    mutate: disconnect,
-    isSuccess: success,
-    isError: error,
-  } = useDisconnect();
+  const { disconnect } = useDisconnect();
   const { deleteWallet } = useWallet();
 
   const disconnectWallet = () => {
     disconnect();
-    console.log(success);
-    console.log(error);
     deleteWallet();
   };
 

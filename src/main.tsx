@@ -7,7 +7,7 @@ import { WalletProvider } from "./context/WalletContext.tsx";
 import { TipProvider } from "./context/TipContext.tsx";
 import { PreferenceProvider } from "./context/PreferenceContext.tsx";
 import { WagmiProvider } from "wagmi";
-import { wagmiConfig } from "./lib/wagmi.ts";
+import { wagmiAdapter } from "./lib/wagmi.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider>
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <WalletProvider>
             <TipProvider>

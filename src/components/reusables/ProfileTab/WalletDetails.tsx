@@ -13,8 +13,8 @@ import {
   Button,
   Box,
   For,
-  Dialog,
   Spinner,
+  Dialog,
 } from "@chakra-ui/react";
 import {
   CopyIcon,
@@ -75,11 +75,9 @@ const WalletDetails = () => {
     >
       <Text fontSize="sm" textAlign="center">You need to connect your wallet to view your wallet details</Text>
       <ConnectWalletDialog>
-        <Dialog.Trigger asChild>
-          <Button borderRadius="lg">
-            Connect Wallet <EmptyWalletIcon />
-          </Button>
-        </Dialog.Trigger>
+        <Button borderRadius="lg">
+          Connect Wallet <EmptyWalletIcon />
+        </Button>
       </ConnectWalletDialog>
     </VStack>
     )

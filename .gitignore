@@ -12,6 +12,41 @@ dist
 dist-ssr
 *.local
 
+.windsurf
+.cursor
+.trae
+.vscode
+
+.crush
+.factory
+.goose
+.iflow
+.junie
+.kilocode
+.kiro
+.kode
+.mcpjam
+.mux
+.neovate
+.openhands
+.pi
+.pochi
+.qoder
+.qwen
+.roo
+.adal
+.agents
+.augment
+.claude
+.codebuddy
+.commandcode
+.continue
+.cortex
+.vibe
+.zencoder
+skills
+skills-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,6 +58,7 @@ dist-ssr
 *.sln
 *.sw?
 
+.storybook
 *storybook.log
 storybook-static
 

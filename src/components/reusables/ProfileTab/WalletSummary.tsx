@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  Dialog,
   Field,
   HStack,
   IconButton,
@@ -59,11 +58,9 @@ const WalletSummary = () => {
     >
       <Text fontSize="sm" textAlign="center">You need to connect your wallet to view your wallet summary</Text>
       <ConnectWalletDialog>
-        <Dialog.Trigger asChild>
-          <Button borderRadius="lg">
-            Connect Wallet <EmptyWalletIcon />
-          </Button>
-        </Dialog.Trigger>
+        <Button borderRadius="lg">
+          Connect Wallet <EmptyWalletIcon />
+        </Button>
       </ConnectWalletDialog>
     </VStack>
     )

@@ -1,12 +1,34 @@
-import { createConfig, http } from "wagmi";
-import { sepolia } from "wagmi/chains";
-import { metaMask } from "wagmi/connectors";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { createAppKit } from "@reown/appkit/react";
+import { sepolia as appKitSepolia } from "@reown/appkit/networks";
+import type { AppKitNetwork } from "@reown/appkit/networks";
+import { http } from "wagmi";
 
-export const wagmiConfig = createConfig({
-  chains: [sepolia],
-  connectors: [metaMask()],
+export const projectId: string =
+  import.meta.env.VITE_REOWN_PROJECT_ID ?? "b56e18d47c72ab683b10814fe9495694";
+
+export const networks: [AppKitNetwork, ...AppKitNetwork[]] = [appKitSepolia];
+
+export const wagmiAdapter = new WagmiAdapter({
+  networks,
+  projectId,
   transports: {
-    [sepolia.id]: http(import.meta.env.VITE_ALCHEMY_RPC_URL),
+    [appKitSepolia.id]: http(import.meta.env.VITE_ALCHEMY_RPC_URL),
+  },
+});
+
+createAppKit({
+  adapters: [wagmiAdapter],
+  networks,
+  projectId,
+  metadata: {
+    name: "TipEase",
+    description: "Send tips with any wallet, any token.",
+    url: window.location.origin,
+    icons: ["/logo.svg"],
+  },
+  features: {
+    analytics: false,
   },
 });
 
