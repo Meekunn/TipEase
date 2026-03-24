@@ -4,8 +4,7 @@ import { sepolia as appKitSepolia } from "@reown/appkit/networks";
 import type { AppKitNetwork } from "@reown/appkit/networks";
 import { http } from "wagmi";
 
-export const projectId: string =
-  import.meta.env.VITE_REOWN_PROJECT_ID ?? "b56e18d47c72ab683b10814fe9495694";
+export const projectId: string = import.meta.env.VITE_REOWN_PROJECT_ID!;
 
 export const networks: [AppKitNetwork, ...AppKitNetwork[]] = [appKitSepolia];
 

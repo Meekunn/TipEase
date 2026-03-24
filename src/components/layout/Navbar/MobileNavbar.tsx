@@ -1,6 +1,6 @@
 import ConnectWalletDialog from "@/components/reusables/ConnectWalletDialog";
 import { EmptyWalletIcon } from "@/components/reusables/icon";
-import { Button, CloseButton, Dialog, Drawer,  Image, Portal, VStack } from "@chakra-ui/react"
+import { Button, CloseButton, Drawer,  HStack,  Image, Portal, VStack } from "@chakra-ui/react"
 import { type ReactNode } from "react"
 import { NavLink } from "react-router";
 import logo from "@/assets/icons/logo.svg";
@@ -87,13 +87,13 @@ const MobileNavbar = ({triggerElement, open, setOpen, isWalletConnected, wallet}
               {isWalletConnected ? (
                 <WalletConnected wallet={wallet} addrFirstChars={10} addrLastChars={10} />
               ) : (
-              <ConnectWalletDialog>
-                <Dialog.Trigger asChild>
+              <HStack w="full">
+                <ConnectWalletDialog>
                   <Button borderRadius="lg" w="full">
                     Connect <EmptyWalletIcon />
                   </Button>
-                </Dialog.Trigger>
-              </ConnectWalletDialog>
+                </ConnectWalletDialog>
+              </HStack>
               )}
             </Drawer.Footer>
             <Drawer.CloseTrigger asChild>
